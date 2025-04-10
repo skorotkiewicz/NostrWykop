@@ -740,6 +740,203 @@ class NostrClient {
     }
   }
 
+  // Pobieranie listy użytkowników, których obserwuje podany użytkownik
+  async getFollowingList(pubkey) {
+    try {
+      // Normalizujemy klucz publiczny (jeśli jest w formacie npub)
+      let normalizedPubkey = pubkey;
+      if (pubkey.startsWith("npub")) {
+        try {
+          const { data } = nip19.decode(pubkey);
+          normalizedPubkey = data;
+        } catch (e) {
+          console.error("Invalid npub format:", e);
+        }
+      }
+
+      // Pobieramy listę obserwowanych przez użytkownika
+      const followingFilter = {
+        kinds: [3],
+        authors: [normalizedPubkey],
+        limit: 1,
+      };
+
+      const followingEvents = await this.pool.querySync(
+        this.relays,
+        followingFilter,
+      );
+
+      if (followingEvents.length === 0) {
+        return [];
+      }
+
+      // Pobierz listę pubkey'ów z tagów 'p'
+      const followingList = followingEvents[0].tags
+        .filter((tag) => tag[0] === "p")
+        .map((tag) => tag[1]);
+
+      return followingList;
+    } catch (error) {
+      console.error("Failed to get following list:", error);
+      return [];
+    }
+  }
+
+  // Pobieranie postów autorstwa określonych użytkowników
+  async getPostsByAuthors(pubkeys, options = {}) {
+    if (!this.connected) {
+      throw new Error("Nostr client not connected");
+    }
+
+    const { limit = 20, sort = "newest" } = options;
+
+    try {
+      // Tworzymy filtr dla zdarzeń typu 1 (krótkie notatki) lub 30023 (długie artykuły)
+      // autorstwa określonych użytkowników
+      const filter = {
+        kinds: [1, 30023],
+        authors: pubkeys,
+        limit: limit,
+      };
+
+      // Pobieramy zdarzenia z przekaźników
+      const events = await this.pool.querySync(this.relays, filter);
+
+      // Przekształcamy zdarzenia Nostr w format postów dla naszej aplikacji
+      const posts = await Promise.all(
+        events.map(async (event) => {
+          // Próbujemy wyodrębnić tytuł i treść
+          let title = "";
+          let content = event.content;
+          let summary = "";
+
+          // Sprawdzamy, czy treść zawiera tytuł (np. pierwsza linia zakończona \n\n)
+          const titleMatch = event.content.match(/^(.+?)\n\n/);
+          if (titleMatch) {
+            title = titleMatch[1];
+            content = event.content.substring(titleMatch[0].length);
+          }
+
+          // Tworzymy krótkie podsumowanie treści
+          summary =
+            content.substring(0, 150) + (content.length > 150 ? "..." : "");
+
+          // Pobieramy informacje o autorze
+          const authorProfile = await this.getUserProfile(event.pubkey);
+
+          // Wyodrębniamy tagi
+          const postTags = event.tags
+            .filter((tag) => tag[0] === "t")
+            .map((tag) => tag[1]);
+
+          // Pobieramy liczbę głosów
+          const votes = await this._getVotesCount(event.id);
+
+          // Pobieramy liczbę komentarzy
+          const commentsCount = await this._getCommentsCount(event.id);
+
+          // Tworzymy obiekt posta
+          return {
+            id: event.id,
+            title: title || "Bez tytułu",
+            content,
+            summary,
+            createdAt: event.created_at * 1000,
+            author: authorProfile,
+            tags: postTags,
+            votes,
+            commentsCount,
+            image: this._extractImageUrl(content),
+          };
+        }),
+      );
+
+      // Sortujemy posty
+      return this._sortPosts(posts, sort);
+    } catch (error) {
+      console.error("Failed to get posts by authors:", error);
+      throw error;
+    }
+  }
+
+  // Pobieranie postów, na które głosował użytkownik
+  async getUserVotedPosts(pubkey, isUpvote = true) {
+    if (!this.connected) {
+      throw new Error("Nostr client not connected");
+    }
+
+    try {
+      // Normalizujemy klucz publiczny (jeśli jest w formacie npub)
+      let normalizedPubkey = pubkey;
+      if (pubkey.startsWith("npub")) {
+        try {
+          const { data } = nip19.decode(pubkey);
+          normalizedPubkey = data;
+        } catch (e) {
+          console.error("Invalid npub format:", e);
+        }
+      }
+
+      // Pobieramy reakcje (kind 7) stworzone przez danego użytkownika
+      const filter = {
+        kinds: [7],
+        authors: [normalizedPubkey],
+        limit: 100,
+      };
+
+      const events = await this.pool.querySync(this.relays, filter);
+
+      // Filtrujemy tylko głosy o określonym typie (+ lub -)
+      const voteContent = isUpvote ? "+" : "-";
+      const votedEvents = events.filter(
+        (event) => event.content === voteContent,
+      );
+
+      // Wyodrębnij ID postów, na które zagłosowano
+      const postIds = votedEvents
+        .map((event) => {
+          const eTag = event.tags.find((tag) => tag[0] === "e");
+          return eTag ? eTag[1] : null;
+        })
+        .filter((id) => id !== null);
+
+      // Jeśli nie ma głosów, zwróć pustą tablicę
+      if (postIds.length === 0) {
+        return [];
+      }
+
+      // Pobierz szczegóły postów
+      const postsPromises = postIds.map(async (postId) => {
+        try {
+          return await this.getPostById(postId);
+        } catch (error) {
+          return null;
+        }
+      });
+
+      const posts = (await Promise.all(postsPromises)).filter(
+        (post) => post !== null,
+      );
+
+      // Sortuj posty według czasu utworzenia (od najnowszego)
+      return posts.sort((a, b) => b.createdAt - a.createdAt);
+    } catch (error) {
+      console.error(
+        `Failed to get ${isUpvote ? "upvoted" : "downvoted"} posts:`,
+        error,
+      );
+      return [];
+    }
+  }
+
+  // Pobieranie zapisanych postów TODO
+  async getSavedPosts(pubkey) {
+    // W prawdziwej implementacji zostałoby to zintegrowane z zapisywaniem postów w Nostr
+    // Na razie zwracamy pustą tablicę jako zaślepkę
+    console.warn("getSavedPosts method is not fully implemented yet");
+    return [];
+  }
+
   // Prywatna metoda do pobierania odpowiedzi na komentarz
   async _getReplies(commentId) {
     try {

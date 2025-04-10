@@ -27,8 +27,8 @@ function Header({ currentUser, onLogin, onLogout, nostrClient }) {
             >
               {currentUser.name || currentUser.pubkey.substring(0, 8)}
             </Link>
-            <button 
-              type="button" 
+            <button
+              type="button"
               className="add-post-btn"
               onClick={() => setShowAddPostModal(true)}
             >

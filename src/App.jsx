@@ -94,20 +94,20 @@ function App() {
             <Route
               path="/feed/:type"
               element={
-                <MainFeed 
-                  nostrClient={nostrClient} 
-                  currentUser={currentUser} 
-                  feedType="user" 
+                <MainFeed
+                  nostrClient={nostrClient}
+                  currentUser={currentUser}
+                  feedType="user"
                 />
               }
             />
             <Route
               path="/tag/:tag"
               element={
-                <MainFeed 
-                  nostrClient={nostrClient} 
-                  currentUser={currentUser} 
-                  feedType="tag" 
+                <MainFeed
+                  nostrClient={nostrClient}
+                  currentUser={currentUser}
+                  feedType="tag"
                 />
               }
             />
