@@ -91,6 +91,26 @@ function App() {
                 <Profile nostrClient={nostrClient} currentUser={currentUser} />
               }
             />
+            <Route
+              path="/feed/:type"
+              element={
+                <MainFeed 
+                  nostrClient={nostrClient} 
+                  currentUser={currentUser} 
+                  feedType="user" 
+                />
+              }
+            />
+            <Route
+              path="/tag/:tag"
+              element={
+                <MainFeed 
+                  nostrClient={nostrClient} 
+                  currentUser={currentUser} 
+                  feedType="tag" 
+                />
+              }
+            />
           </Routes>
         </main>
       </div>

@@ -904,6 +904,45 @@
   .user-feeds ul li a:hover {
     background-color: var(--gray-lighter);
   }
+  
+  .user-feeds ul li a.active {
+    background-color: var(--primary-color);
+    color: white;
+  }
+  
+  .feed-sort, .tag-sort {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: var(--gray-lighter);
+    border-radius: 4px;
+  }
+  
+  .feed-sort span, .tag-sort span {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--secondary-color);
+  }
+  
+  .sort-options {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+  
+  .sort-options button {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 12px;
+  }
+  
+  .sort-options button.active {
+    background-color: var(--primary-color);
+    color: white;
+  }
 
   .loading-tags {
     color: var(--gray-light);
@@ -939,4 +978,14 @@
   .social-links a {
     font-size: 12px;
     color: var(--link-color);
+  }
+  
+  /* Dodatkowe style dla Popular Tags */
+  .popular-tags ul li a.active {
+    background-color: var(--primary-color);
+    color: white;
+  }
+  
+  .popular-tags ul li a.active .tag-count {
+    color: rgba(255, 255, 255, 0.7);
   }

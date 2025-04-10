@@ -5,20 +5,39 @@ function Sidebar({ nostrClient, currentUser }) {
   const [popularTags, setPopularTags] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("home");
+  const [activeFeed, setActiveFeed] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Ustaw aktywną zakładkę na podstawie aktualnej ścieżki
+    // Ustaw aktywną zakładkę i feed na podstawie aktualnej ścieżki i parametrów
     const path = location.pathname;
+    const searchParams = new URLSearchParams(location.search);
+    const sortParam = searchParams.get('sort');
+    
+    // Obsługa głównych ścieżek i sortowania
     if (path === "/") {
-      setActiveTab("home");
-    } else if (path === "/hot") {
-      setActiveTab("hot");
-    } else if (path === "/active") {
-      setActiveTab("active");
-    } else if (path === "/latest") {
-      setActiveTab("latest");
+      if (sortParam === "hot") {
+        setActiveTab("hot");
+      } else if (sortParam === "active") {
+        setActiveTab("active");
+      } else if (sortParam === "newest") {
+        setActiveTab("latest");
+      } else {
+        setActiveTab("home");
+      }
+      setActiveFeed(null);
+    } 
+    // Obsługa ścieżek /feed/*
+    else if (path.startsWith("/feed/")) {
+      setActiveTab(null);
+      const feedType = path.split("/feed/")[1];
+      setActiveFeed(feedType);
+    }
+    // Obsługa ścieżek /tag/*
+    else if (path.startsWith("/tag/")) {
+      setActiveTab(null);
+      setActiveFeed(null);
     }
   }, [location]);
 
@@ -156,18 +175,64 @@ function Sidebar({ nostrClient, currentUser }) {
           <h3>Twoje feedy</h3>
           <ul>
             <li>
-              <Link to="/feed/followed">Obserwowani użytkownicy</Link>
+              <Link 
+                to="/feed/followed" 
+                className={activeFeed === "followed" ? "active" : ""}
+                onClick={() => setActiveFeed("followed")}
+              >
+                Obserwowani użytkownicy
+              </Link>
             </li>
             <li>
-              <Link to="/feed/saved">Zapisane posty</Link>
+              <Link 
+                to="/feed/saved" 
+                className={activeFeed === "saved" ? "active" : ""}
+                onClick={() => setActiveFeed("saved")}
+              >
+                Zapisane posty
+              </Link>
             </li>
             <li>
-              <Link to="/feed/upvoted">Wykopane</Link>
+              <Link 
+                to="/feed/upvoted" 
+                className={activeFeed === "upvoted" ? "active" : ""}
+                onClick={() => setActiveFeed("upvoted")}
+              >
+                Wykopane
+              </Link>
             </li>
             <li>
-              <Link to="/feed/downvoted">Zakopane</Link>
+              <Link 
+                to="/feed/downvoted" 
+                className={activeFeed === "downvoted" ? "active" : ""}
+                onClick={() => setActiveFeed("downvoted")}
+              >
+                Zakopane
+              </Link>
             </li>
           </ul>
+          
+          {activeFeed && (
+            <div className="feed-sort">
+              <span>Sortuj:</span>
+              <div className="sort-options">
+                <button 
+                  type="button" 
+                  onClick={() => navigate(`/feed/${activeFeed}?sort=newest`)}
+                  className={location.search.includes("sort=newest") || !location.search ? "active" : ""}
+                >
+                  Najnowsze
+                </button>
+                <button 
+                  type="button" 
+                  onClick={() => navigate(`/feed/${activeFeed}?sort=hot`)}
+                  className={location.search.includes("sort=hot") ? "active" : ""}
+                >
+                  Gorące
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -177,14 +242,58 @@ function Sidebar({ nostrClient, currentUser }) {
           <div className="loading-tags">Ładowanie tagów...</div>
         ) : (
           <ul>
-            {popularTags.map((tag) => (
-              <li key={tag.name}>
-                <Link to={`/tag/${tag.name}`}>
-                  #{tag.name} <span className="tag-count">({tag.count})</span>
-                </Link>
-              </li>
-            ))}
+            {popularTags.map((tag) => {
+              const isActive = location.pathname === `/tag/${tag.name}`;
+              return (
+                <li key={tag.name}>
+                  <Link 
+                    to={`/tag/${tag.name}`}
+                    className={isActive ? "active" : ""}
+                  >
+                    #{tag.name} <span className="tag-count">({tag.count})</span>
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
+        )}
+        
+        {location.pathname.startsWith("/tag/") && (
+          <div className="tag-sort">
+            <span>Sortuj tag:</span>
+            <div className="sort-options">
+              <button 
+                type="button" 
+                onClick={() => {
+                  const tagName = location.pathname.split("/tag/")[1];
+                  navigate(`/tag/${tagName}?sort=newest`);
+                }}
+                className={location.search.includes("sort=newest") || !location.search ? "active" : ""}
+              >
+                Najnowsze
+              </button>
+              <button 
+                type="button" 
+                onClick={() => {
+                  const tagName = location.pathname.split("/tag/")[1];
+                  navigate(`/tag/${tagName}?sort=hot`);
+                }}
+                className={location.search.includes("sort=hot") ? "active" : ""}
+              >
+                Gorące
+              </button>
+              <button 
+                type="button" 
+                onClick={() => {
+                  const tagName = location.pathname.split("/tag/")[1];
+                  navigate(`/tag/${tagName}?sort=active`);
+                }}
+                className={location.search.includes("sort=active") ? "active" : ""}
+              >
+                Aktywne
+              </button>
+            </div>
+          </div>
         )}
       </div>
 
