@@ -58,7 +58,7 @@ function App() {
   };
 
   if (isLoading) {
-    return <div className="loading">{t('common.loading')}</div>;
+    return <div className="loading">{t("common.loading")}</div>;
   }
 
   return (
@@ -117,10 +117,7 @@ function App() {
             <Route
               path="/search"
               element={
-                <Search
-                  nostrClient={nostrClient}
-                  currentUser={currentUser}
-                />
+                <Search nostrClient={nostrClient} currentUser={currentUser} />
               }
             />
           </Routes>

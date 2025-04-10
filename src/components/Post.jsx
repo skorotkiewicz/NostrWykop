@@ -63,9 +63,12 @@ function Post({ post, currentUser, onVote, compact = false }) {
           <div className="post-stats">
             <span className="comments-count">
               <Link to={`/post/${post.id}`}>
-                {post.commentsCount} {post.commentsCount === 1 ? t('common.oneComment') : 
-                   (post.commentsCount > 1 && post.commentsCount < 5) ? t('common.twoComments') : 
-                   t('common.comments')}
+                {post.commentsCount}{" "}
+                {post.commentsCount === 1
+                  ? t("common.oneComment")
+                  : post.commentsCount > 1 && post.commentsCount < 5
+                    ? t("common.twoComments")
+                    : t("common.comments")}
               </Link>
             </span>
           </div>

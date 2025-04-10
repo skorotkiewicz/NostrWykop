@@ -1,9 +1,9 @@
-import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
-import LanguageDetector from 'i18next-browser-languagedetector';
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
+import LanguageDetector from "i18next-browser-languagedetector";
 
-import enTranslation from './langs/en.json';
-import plTranslation from './langs/pl.json';
+import enTranslation from "./langs/en.json";
+import plTranslation from "./langs/pl.json";
 
 i18n
   // detect user language
@@ -16,7 +16,7 @@ i18n
       en: enTranslation,
       pl: plTranslation,
     },
-    fallbackLng: 'en',
+    fallbackLng: "en",
     debug: false,
 
     interpolation: {
@@ -25,18 +25,21 @@ i18n
 
     // detection options
     detection: {
-      order: ['localStorage', 'navigator'],
-      lookupLocalStorage: 'i18nextLng',
-      caches: ['localStorage'],
+      order: ["localStorage", "navigator"],
+      lookupLocalStorage: "i18nextLng",
+      caches: ["localStorage"],
     },
   });
 
 // Helper function to detect if browser language is supported and set it
 const setBrowserLanguage = () => {
-  const browserLang = navigator.language.split('-')[0]; // Get language code (e.g., 'en' from 'en-US')
-  const supportedLanguages = ['en', 'pl'];
-  
-  if (supportedLanguages.includes(browserLang) && i18n.language !== browserLang) {
+  const browserLang = navigator.language.split("-")[0]; // Get language code (e.g., 'en' from 'en-US')
+  const supportedLanguages = ["en", "pl"];
+
+  if (
+    supportedLanguages.includes(browserLang) &&
+    i18n.language !== browserLang
+  ) {
     i18n.changeLanguage(browserLang);
   }
 };

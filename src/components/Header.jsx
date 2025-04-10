@@ -11,7 +11,7 @@ function Header({ currentUser, onLogin, onLogout, nostrClient }) {
   const [showAddPostModal, setShowAddPostModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
-  
+
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -26,9 +26,9 @@ function Header({ currentUser, onLogin, onLogout, nostrClient }) {
           NostrWykop
         </Link>
         <form className="search-bar" onSubmit={handleSearch}>
-          <input 
-            type="text" 
-            placeholder={t('search.searchPlaceholder')} 
+          <input
+            type="text"
+            placeholder={t("search.searchPlaceholder")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -50,10 +50,10 @@ function Header({ currentUser, onLogin, onLogout, nostrClient }) {
               className="add-post-btn"
               onClick={() => setShowAddPostModal(true)}
             >
-              + {t('post.addPost')}
+              + {t("post.addPost")}
             </button>
             <button type="button" onClick={onLogout} className="logout-btn">
-              {t('header.logout')}
+              {t("header.logout")}
             </button>
           </>
         ) : (
@@ -62,7 +62,7 @@ function Header({ currentUser, onLogin, onLogout, nostrClient }) {
             onClick={() => setShowLoginModal(true)}
             className="login-btn"
           >
-            {t('header.login')}
+            {t("header.login")}
           </button>
         )}
       </div>

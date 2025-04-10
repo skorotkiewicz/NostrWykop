@@ -1,4 +1,4 @@
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 /**
  * A simple hook that wraps useTranslation to make it easier to use
@@ -6,11 +6,11 @@ import { useTranslation } from 'react-i18next';
  */
 export default function useTranslate() {
   const { t, i18n } = useTranslation();
-  
+
   return {
     t,
     i18n,
     changeLanguage: i18n.changeLanguage,
-    currentLanguage: i18n.language
+    currentLanguage: i18n.language,
   };
 }

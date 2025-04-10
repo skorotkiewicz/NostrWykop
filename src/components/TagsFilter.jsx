@@ -38,14 +38,14 @@ function TagsFilter({ selectedTags, onTagSelect }) {
 
   return (
     <div className="tags-filter">
-      <h3>{t('tagsFilter.filterByTags')}</h3>
+      <h3>{t("tagsFilter.filterByTags")}</h3>
 
       <div className="search-tags">
         <input
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder={t('tagsFilter.searchTags')}
+          placeholder={t("tagsFilter.searchTags")}
         />
       </div>
 
@@ -67,7 +67,7 @@ function TagsFilter({ selectedTags, onTagSelect }) {
             className="show-more-btn"
             onClick={() => setShowAll(true)}
           >
-            {t('tagsFilter.showMore')}
+            {t("tagsFilter.showMore")}
           </button>
         )}
 
@@ -77,14 +77,14 @@ function TagsFilter({ selectedTags, onTagSelect }) {
             className="show-less-btn"
             onClick={() => setShowAll(false)}
           >
-            {t('tagsFilter.showLess')}
+            {t("tagsFilter.showLess")}
           </button>
         )}
       </div>
 
       {selectedTags.length > 0 && (
         <div className="selected-tags">
-          <h4>{t('tagsFilter.selectedTags')}</h4>
+          <h4>{t("tagsFilter.selectedTags")}</h4>
           <div className="selected-tags-list">
             {selectedTags.map((tag) => (
               <span key={tag} className="selected-tag">
@@ -108,7 +108,7 @@ function TagsFilter({ selectedTags, onTagSelect }) {
                 }
               }}
             >
-              {t('tagsFilter.clearAll')}
+              {t("tagsFilter.clearAll")}
             </button>
           </div>
         </div>

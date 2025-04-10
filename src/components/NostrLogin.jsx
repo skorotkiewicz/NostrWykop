@@ -12,7 +12,7 @@ function NostrLogin({ onLogin, onClose }) {
     try {
       // Sprawdź czy rozszerzenie NIP-07 jest dostępne
       if (!window.nostr) {
-        alert(t('login.noExtensionFound'));
+        alert(t("login.noExtensionFound"));
         setLoginMethod("manual");
         return;
       }
@@ -25,7 +25,7 @@ function NostrLogin({ onLogin, onClose }) {
       }
     } catch (error) {
       console.error("Failed to login with extension:", error);
-      alert(t('login.extensionLoginError'));
+      alert(t("login.extensionLoginError"));
     } finally {
       setIsLoading(false);
     }
@@ -42,11 +42,11 @@ function NostrLogin({ onLogin, onClose }) {
         onLogin(pubkey);
         onClose();
       } else {
-        alert(t('login.invalidPublicKeyFormat'));
+        alert(t("login.invalidPublicKeyFormat"));
       }
     } catch (error) {
       console.error("Failed to login manually:", error);
-      alert(t('login.loginError'));
+      alert(t("login.loginError"));
     }
   };
 
@@ -56,7 +56,7 @@ function NostrLogin({ onLogin, onClose }) {
         <button type="button" onClick={onClose} className="close-btn">
           &times;
         </button>
-        <h2>{t('login.loginWithNostr')}</h2>
+        <h2>{t("login.loginWithNostr")}</h2>
 
         <div className="login-tabs">
           <button
@@ -64,53 +64,51 @@ function NostrLogin({ onLogin, onClose }) {
             className={`login-tab ${loginMethod === "extension" ? "active" : ""}`}
             onClick={() => setLoginMethod("extension")}
           >
-            {t('login.loginWithExtensionTab')}
+            {t("login.loginWithExtensionTab")}
           </button>
           <button
             type="button"
             className={`login-tab ${loginMethod === "manual" ? "active" : ""}`}
             onClick={() => setLoginMethod("manual")}
           >
-            {t('login.manualLoginTab')}
+            {t("login.manualLoginTab")}
           </button>
         </div>
 
         {loginMethod === "extension" ? (
           <div className="extension-login">
-            <p>
-              {t('login.clickToLoginWithExtension')}
-            </p>
+            <p>{t("login.clickToLoginWithExtension")}</p>
             <button
               type="button"
               onClick={handleNip07Login}
               className="login-btn"
               disabled={isLoading}
             >
-              {isLoading ? t('login.loggingIn') : t('login.loginWithExtensionButton')}
+              {isLoading
+                ? t("login.loggingIn")
+                : t("login.loginWithExtensionButton")}
             </button>
           </div>
         ) : (
           <div className="manual-login">
-            <p>{t('login.enterYourPublicKey')}</p>
+            <p>{t("login.enterYourPublicKey")}</p>
             <form onSubmit={handleManualLogin}>
               <input
                 type="text"
                 value={pubkey}
                 onChange={(e) => setPubkey(e.target.value)}
-                placeholder={t('login.publicKeyPlaceholder')}
+                placeholder={t("login.publicKeyPlaceholder")}
                 required
               />
               <button type="submit" className="login-btn">
-                {t('login.loginButton')}
+                {t("login.loginButton")}
               </button>
             </form>
           </div>
         )}
 
         <div className="login-info">
-          <p>
-            {t('login.noNostrAccount')}
-          </p>
+          <p>{t("login.noNostrAccount")}</p>
           <ul>
             <li>
               <a
@@ -145,7 +143,7 @@ function NostrLogin({ onLogin, onClose }) {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {t('login.nos2xForFirefox')}
+                {t("login.nos2xForFirefox")}
               </a>
             </li>
           </ul>

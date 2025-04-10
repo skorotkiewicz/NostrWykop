@@ -781,31 +781,31 @@ class NostrClient {
       return [];
     }
   }
-  
+
   // Pobieranie szczegółowych profili użytkowników, których obserwuje podany użytkownik
   async getFollowingProfiles(pubkey) {
     try {
       // Pobierz listę pubkey'ów obserwowanych
       const followingList = await this.getFollowingList(pubkey);
-      
+
       if (followingList.length === 0) {
         return [];
       }
-      
+
       // Pobierz szczegóły profili dla każdego obserwowanego użytkownika
       const profiles = await Promise.all(
         followingList.map(async (followedPubkey) => {
           return await this.getUserProfile(followedPubkey);
-        })
+        }),
       );
-      
+
       return profiles;
     } catch (error) {
       console.error("Failed to get following profiles:", error);
       return [];
     }
   }
-  
+
   // Pobieranie listy użytkowników obserwujących podanego użytkownika
   async getFollowersList(pubkey) {
     try {
@@ -819,46 +819,46 @@ class NostrClient {
           console.error("Invalid npub format:", e);
         }
       }
-      
+
       // Pobieramy listy obserwowanych (kind 3) innych użytkowników, aby znaleźć obserwujących
       const followerFilter = {
         kinds: [3],
         "#p": [normalizedPubkey],
         limit: 1000,
       };
-      
+
       const followerEvents = await this.pool.querySync(
         this.relays,
         followerFilter,
       );
-      
+
       // Wyodrębnij pubkey'e autorów tych list (to są obserwujący)
-      const followersList = followerEvents.map(event => event.pubkey);
-      
+      const followersList = followerEvents.map((event) => event.pubkey);
+
       return followersList;
     } catch (error) {
       console.error("Failed to get followers list:", error);
       return [];
     }
   }
-  
+
   // Pobieranie szczegółowych profili użytkowników obserwujących podanego użytkownika
   async getFollowersProfiles(pubkey) {
     try {
       // Pobierz listę pubkey'ów obserwujących
       const followersList = await this.getFollowersList(pubkey);
-      
+
       if (followersList.length === 0) {
         return [];
       }
-      
+
       // Pobierz szczegóły profili dla każdego obserwującego użytkownika
       const profiles = await Promise.all(
         followersList.map(async (followerPubkey) => {
           return await this.getUserProfile(followerPubkey);
-        })
+        }),
       );
-      
+
       return profiles;
     } catch (error) {
       console.error("Failed to get followers profiles:", error);
@@ -1127,12 +1127,13 @@ class NostrClient {
       const events = await this.pool.querySync(this.relays, filter);
 
       // Tworzymy regex do wyszukiwania (ignorujący wielkość liter)
-      const searchRegex = new RegExp(query, 'i');
+      const searchRegex = new RegExp(query, "i");
 
       // Filtrujemy zdarzenia, które zawierają szukaną frazę
-      const matchingEvents = events.filter(event => 
-        searchRegex.test(event.content) || 
-        event.tags.some(tag => tag[0] === 't' && searchRegex.test(tag[1]))
+      const matchingEvents = events.filter(
+        (event) =>
+          searchRegex.test(event.content) ||
+          event.tags.some((tag) => tag[0] === "t" && searchRegex.test(tag[1])),
       );
 
       // Ograniczamy liczbę wyników
@@ -1154,7 +1155,8 @@ class NostrClient {
           }
 
           // Tworzymy krótkie podsumowanie treści
-          summary = content.substring(0, 150) + (content.length > 150 ? "..." : "");
+          summary =
+            content.substring(0, 150) + (content.length > 150 ? "..." : "");
 
           // Pobieramy informacje o autorze
           const authorProfile = await this.getUserProfile(event.pubkey);
@@ -1183,10 +1185,13 @@ class NostrClient {
             commentsCount,
             image: this._extractImageUrl(content),
             // Podświetlamy, dlaczego post został znaleziony
-            matchReason: searchRegex.test(title) ? 'title' : 
-                        searchRegex.test(content) ? 'content' : 'tags'
+            matchReason: searchRegex.test(title)
+              ? "title"
+              : searchRegex.test(content)
+                ? "content"
+                : "tags",
           };
-        })
+        }),
       );
 
       // Sortujemy posty

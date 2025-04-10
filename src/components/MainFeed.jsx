@@ -60,7 +60,7 @@ function MainFeed({ nostrClient, currentUser, feedType }) {
             tags: [tag],
             sort: activeTab,
           });
-          setFeedTitle(t('feeds.tagHeading').replace('{tag}', tag));
+          setFeedTitle(t("feeds.tagHeading").replace("{tag}", tag));
         }
         // Feedy użytkownika
         else if (feedType === "user" && type) {
@@ -82,7 +82,7 @@ function MainFeed({ nostrClient, currentUser, feedType }) {
                   );
                 }
               }
-              setFeedTitle(t('feeds.followedUsersHeading'));
+              setFeedTitle(t("feeds.followedUsersHeading"));
               break;
 
             case "upvoted":
@@ -93,7 +93,7 @@ function MainFeed({ nostrClient, currentUser, feedType }) {
                   true,
                 );
               }
-              setFeedTitle(t('feeds.upvotedHeading'));
+              setFeedTitle(t("feeds.upvotedHeading"));
               break;
 
             case "downvoted":
@@ -104,7 +104,7 @@ function MainFeed({ nostrClient, currentUser, feedType }) {
                   false,
                 );
               }
-              setFeedTitle(t('feeds.downvotedHeading'));
+              setFeedTitle(t("feeds.downvotedHeading"));
               break;
 
             case "saved":
@@ -114,7 +114,7 @@ function MainFeed({ nostrClient, currentUser, feedType }) {
                   currentUser.pubkey,
                 );
               }
-              setFeedTitle(t('feeds.savedHeading'));
+              setFeedTitle(t("feeds.savedHeading"));
               break;
 
             default:
@@ -158,7 +158,7 @@ function MainFeed({ nostrClient, currentUser, feedType }) {
 
   const handleVote = async (postId, isUpvote) => {
     if (!currentUser) {
-      alert(t('feeds.loginToVote'));
+      alert(t("feeds.loginToVote"));
       return;
     }
 
@@ -207,21 +207,21 @@ function MainFeed({ nostrClient, currentUser, feedType }) {
           className={`tab ${activeTab === "hot" ? "active" : ""}`}
           onClick={() => handleTabClick("hot")}
         >
-          {t('feeds.hot')}
+          {t("feeds.hot")}
         </button>
         <button
           type="button"
           className={`tab ${activeTab === "newest" ? "active" : ""}`}
           onClick={() => handleTabClick("newest")}
         >
-          {t('feeds.newest')}
+          {t("feeds.newest")}
         </button>
         <button
           type="button"
           className={`tab ${activeTab === "active" ? "active" : ""}`}
           onClick={() => handleTabClick("active")}
         >
-          {t('feeds.active')}
+          {t("feeds.active")}
         </button>
       </div>
 
@@ -230,7 +230,7 @@ function MainFeed({ nostrClient, currentUser, feedType }) {
       )}
 
       {isLoading ? (
-        <div className="loading">{t('feeds.loadingPosts')}</div>
+        <div className="loading">{t("feeds.loadingPosts")}</div>
       ) : (
         <div className="posts-list">
           {posts.length > 0 ? (
@@ -245,8 +245,8 @@ function MainFeed({ nostrClient, currentUser, feedType }) {
           ) : (
             <div className="no-posts">
               {feedType === "user"
-                ? t('feeds.noPosts')
-                : t('feeds.noPostsToShow')}
+                ? t("feeds.noPosts")
+                : t("feeds.noPostsToShow")}
             </div>
           )}
         </div>
@@ -258,11 +258,11 @@ function MainFeed({ nostrClient, currentUser, feedType }) {
           onClick={() => setPage(page - 1)}
           disabled={page === 1}
         >
-          {t('feeds.previous')}
+          {t("feeds.previous")}
         </button>
-        <span>{t('feeds.page').replace('{page}', page)}</span>
+        <span>{t("feeds.page").replace("{page}", page)}</span>
         <button type="button" onClick={() => setPage(page + 1)}>
-          {t('feeds.next')}
+          {t("feeds.next")}
         </button>
       </div>
     </div>

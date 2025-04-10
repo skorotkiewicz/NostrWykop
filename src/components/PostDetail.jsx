@@ -37,7 +37,7 @@ function PostDetail({ nostrClient, currentUser }) {
 
   const handleVote = async (isUpvote) => {
     if (!currentUser) {
-      alert(t('post.loginToVote'));
+      alert(t("post.loginToVote"));
       return;
     }
 
@@ -57,7 +57,7 @@ function PostDetail({ nostrClient, currentUser }) {
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
     if (!currentUser) {
-      alert(t('post.loginToComment'));
+      alert(t("post.loginToComment"));
       return;
     }
 
@@ -73,11 +73,11 @@ function PostDetail({ nostrClient, currentUser }) {
   };
 
   if (isLoading) {
-    return <div className="loading">{t('post.loadingPostDetails')}</div>;
+    return <div className="loading">{t("post.loadingPostDetails")}</div>;
   }
 
   if (!post) {
-    return <div className="not-found">{t('post.postNotFound')}</div>;
+    return <div className="not-found">{t("post.postNotFound")}</div>;
   }
 
   return (
@@ -165,17 +165,19 @@ function PostDetail({ nostrClient, currentUser }) {
       </div>
 
       <div className="comments-section">
-        <h2>{t('post.comments')} ({comments.length})</h2>
+        <h2>
+          {t("post.comments")} ({comments.length})
+        </h2>
 
         {currentUser && (
           <form className="comment-form" onSubmit={handleCommentSubmit}>
             <textarea
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
-              placeholder={t('post.writeComment')}
+              placeholder={t("post.writeComment")}
               required
             />
-            <button type="submit">{t('post.addComment')}</button>
+            <button type="submit">{t("post.addComment")}</button>
           </form>
         )}
 
@@ -190,7 +192,7 @@ function PostDetail({ nostrClient, currentUser }) {
               />
             ))
           ) : (
-            <div className="no-comments">{t('post.noComments')}</div>
+            <div className="no-comments">{t("post.noComments")}</div>
           )}
         </div>
       </div>

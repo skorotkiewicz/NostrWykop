@@ -11,23 +11,24 @@ function Search({ nostrClient, currentUser }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     const fetchResults = async () => {
       if (!searchQuery || !nostrClient) return;
-      
+
       setIsLoading(true);
       setError(null);
-      
+
       try {
         const searchResults = await nostrClient.searchPosts(searchQuery, {
           limit: 50,
-          sort: "newest"
+          sort: "newest",
         });
-        
+
         setResults(searchResults);
       } catch (err) {
         console.error("Search error:", err);
-        setError(t('search.searchError'));
+        setError(t("search.searchError"));
       } finally {
         setIsLoading(false);
       }
@@ -38,7 +39,7 @@ function Search({ nostrClient, currentUser }) {
 
   const handleVote = async (postId, isUpvote) => {
     if (!currentUser) {
-      alert(t('search.loginToVote'));
+      alert(t("search.loginToVote"));
       return;
     }
 
@@ -55,7 +56,7 @@ function Search({ nostrClient, currentUser }) {
             };
           }
           return post;
-        })
+        }),
       );
     } catch (error) {
       console.error("Failed to vote:", error);
@@ -64,24 +65,26 @@ function Search({ nostrClient, currentUser }) {
 
   return (
     <div className="search-results">
-      <h2>{t('search.searchResultsFor').replace('{query}', `"${searchQuery}"`)}</h2>
-      
-      {isLoading && <div className="loading">{t('search.searching')}</div>}
-      
+      <h2>
+        {t("search.searchResultsFor").replace("{query}", `"${searchQuery}"`)}
+      </h2>
+
+      {isLoading && <div className="loading">{t("search.searching")}</div>}
+
       {error && <div className="error-message">{error}</div>}
-      
+
       {!isLoading && results.length === 0 && !error && (
         <div className="no-results">
-          {t('search.noResultsFound').replace('{query}', `"${searchQuery}"`)}
+          {t("search.noResultsFound").replace("{query}", `"${searchQuery}"`)}
         </div>
       )}
-      
+
       <div className="posts-list">
         {results.map((post) => (
-          <Post 
-            key={post.id} 
-            post={post} 
-            currentUser={currentUser} 
+          <Post
+            key={post.id}
+            post={post}
+            currentUser={currentUser}
             onVote={handleVote}
           />
         ))}
