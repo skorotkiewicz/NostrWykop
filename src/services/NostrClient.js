@@ -1,5 +1,7 @@
 import { nip19 } from "nostr-tools";
 
+const NO_TITLE = "-🌎-"; // "No title";
+
 class NostrClient {
   constructor() {
     this.relays = [
@@ -98,7 +100,7 @@ class NostrClient {
           // Tworzymy obiekt posta
           return {
             id: event.id,
-            title: title || "Bez tytułu",
+            title: title || NO_TITLE,
             content,
             summary,
             createdAt: event.created_at * 1000,
@@ -166,7 +168,7 @@ class NostrClient {
       // Tworzymy obiekt posta
       return {
         id: event.id,
-        title: title || "Bez tytułu",
+        title: title || NO_TITLE,
         content,
         createdAt: event.created_at * 1000,
         author: authorProfile,
@@ -307,7 +309,7 @@ class NostrClient {
 
           return {
             id: event.id,
-            title: title || "Bez tytułu",
+            title: title || NO_TITLE,
             content,
             summary,
             createdAt: event.created_at * 1000,
@@ -922,7 +924,7 @@ class NostrClient {
           // Tworzymy obiekt posta
           return {
             id: event.id,
-            title: title || "Bez tytułu",
+            title: title || NO_TITLE,
             content,
             summary,
             createdAt: event.created_at * 1000,
@@ -1175,7 +1177,7 @@ class NostrClient {
           // Tworzymy obiekt posta
           return {
             id: event.id,
-            title: title || "Bez tytułu",
+            title: title || NO_TITLE,
             content,
             summary,
             createdAt: event.created_at * 1000,

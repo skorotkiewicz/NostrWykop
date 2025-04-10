@@ -3,10 +3,10 @@ import { Routes, Route } from "react-router-dom";
 import useTranslate from "./utils/useTranslate";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
-import MainFeed from "./components/MainFeed";
-import PostDetail from "./components/PostDetail";
-import Profile from "./components/Profile";
-import Search from "./components/Search";
+import PostDetail from "./pages/PostDetail";
+import Profile from "./pages/Profile";
+import MainFeed from "./pages/MainFeed";
+import Search from "./pages/Search";
 import NostrClient from "./services/NostrClient";
 import "./App.css";
 

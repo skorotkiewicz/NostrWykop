@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import Comment from "./Comment";
+import Comment from "../components/Comment";
 import { timeAgo } from "../utils/dateUtils";
 import useTranslate from "../utils/useTranslate";
 

@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import useTranslate from "../utils/useTranslate";
-import Post from "./Post";
-import Comment from "./Comment";
-import UserList from "./UserList";
+import Post from "../components/Post";
+import Comment from "../components/Comment";
+import UserList from "../components/UserList";
 
 function Profile({ nostrClient, currentUser }) {
   const { t } = useTranslate();

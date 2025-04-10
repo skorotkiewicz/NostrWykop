@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import useTranslate from "../utils/useTranslate";
-import Post from "./Post";
+import Post from "../components/Post";
 
 function Search({ nostrClient, currentUser }) {
   const { t } = useTranslate();

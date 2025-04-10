@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import useTranslate from "../utils/useTranslate";
-import Post from "./Post";
-import TagsFilter from "./TagsFilter";
+import Post from "../components/Post";
+import TagsFilter from "../components/TagsFilter";
 
 function MainFeed({ nostrClient, currentUser, feedType }) {
   const { t } = useTranslate();
