@@ -1,6 +1,8 @@
 import { useState } from "react";
+import useTranslate from "../utils/useTranslate";
 
 function NostrLogin({ onLogin, onClose }) {
+  const { t } = useTranslate();
   const [pubkey, setPubkey] = useState("");
   const [loginMethod, setLoginMethod] = useState("extension"); // 'extension' lub 'manual'
   const [isLoading, setIsLoading] = useState(false);
@@ -10,9 +12,7 @@ function NostrLogin({ onLogin, onClose }) {
     try {
       // Sprawdź czy rozszerzenie NIP-07 jest dostępne
       if (!window.nostr) {
-        alert(
-          "Nie znaleziono rozszerzenia Nostr! Zainstaluj rozszerzenie NIP-07 lub wprowadź klucz ręcznie.",
-        );
+        alert(t('login.noExtensionFound'));
         setLoginMethod("manual");
         return;
       }
@@ -25,7 +25,7 @@ function NostrLogin({ onLogin, onClose }) {
       }
     } catch (error) {
       console.error("Failed to login with extension:", error);
-      alert("Wystąpił błąd podczas logowania przez rozszerzenie.");
+      alert(t('login.extensionLoginError'));
     } finally {
       setIsLoading(false);
     }
@@ -42,11 +42,11 @@ function NostrLogin({ onLogin, onClose }) {
         onLogin(pubkey);
         onClose();
       } else {
-        alert("Nieprawidłowy format klucza publicznego Nostr.");
+        alert(t('login.invalidPublicKeyFormat'));
       }
     } catch (error) {
       console.error("Failed to login manually:", error);
-      alert("Wystąpił błąd podczas logowania.");
+      alert(t('login.loginError'));
     }
   };
 
@@ -56,7 +56,7 @@ function NostrLogin({ onLogin, onClose }) {
         <button type="button" onClick={onClose} className="close-btn">
           &times;
         </button>
-        <h2>Zaloguj się przez Nostr</h2>
+        <h2>{t('login.loginWithNostr')}</h2>
 
         <div className="login-tabs">
           <button
@@ -64,22 +64,21 @@ function NostrLogin({ onLogin, onClose }) {
             className={`login-tab ${loginMethod === "extension" ? "active" : ""}`}
             onClick={() => setLoginMethod("extension")}
           >
-            Logowanie przez rozszerzenie
+            {t('login.loginWithExtensionTab')}
           </button>
           <button
             type="button"
             className={`login-tab ${loginMethod === "manual" ? "active" : ""}`}
             onClick={() => setLoginMethod("manual")}
           >
-            Logowanie ręczne
+            {t('login.manualLoginTab')}
           </button>
         </div>
 
         {loginMethod === "extension" ? (
           <div className="extension-login">
             <p>
-              Kliknij poniżej, aby zalogować się przy użyciu rozszerzenia Nostr
-              (NIP-07):
+              {t('login.clickToLoginWithExtension')}
             </p>
             <button
               type="button"
@@ -87,22 +86,22 @@ function NostrLogin({ onLogin, onClose }) {
               className="login-btn"
               disabled={isLoading}
             >
-              {isLoading ? "Logowanie..." : "Zaloguj przez rozszerzenie"}
+              {isLoading ? t('login.loggingIn') : t('login.loginWithExtensionButton')}
             </button>
           </div>
         ) : (
           <div className="manual-login">
-            <p>Wprowadź swój klucz publiczny Nostr (npub lub hex):</p>
+            <p>{t('login.enterYourPublicKey')}</p>
             <form onSubmit={handleManualLogin}>
               <input
                 type="text"
                 value={pubkey}
                 onChange={(e) => setPubkey(e.target.value)}
-                placeholder="npub1... lub klucz hex"
+                placeholder={t('login.publicKeyPlaceholder')}
                 required
               />
               <button type="submit" className="login-btn">
-                Zaloguj
+                {t('login.loginButton')}
               </button>
             </form>
           </div>
@@ -110,8 +109,7 @@ function NostrLogin({ onLogin, onClose }) {
 
         <div className="login-info">
           <p>
-            Nie masz jeszcze konta Nostr? Możesz utworzyć klucze przy użyciu
-            różnych narzędzi, np.:
+            {t('login.noNostrAccount')}
           </p>
           <ul>
             <li>
@@ -147,7 +145,7 @@ function NostrLogin({ onLogin, onClose }) {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                nos2x for Firefox
+                {t('login.nos2xForFirefox')}
               </a>
             </li>
           </ul>

@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import useTranslate from "../utils/useTranslate";
 
 function AddPostModal({ currentUser, nostrClient, onClose }) {
+  const { t } = useTranslate();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [tags, setTags] = useState("");
@@ -13,7 +15,7 @@ function AddPostModal({ currentUser, nostrClient, onClose }) {
     e.preventDefault();
 
     if (!title.trim() || !content.trim()) {
-      setError("Tytuł i treść są wymagane");
+      setError(t('post.titleAndContentRequired'));
       return;
     }
 
@@ -50,7 +52,7 @@ function AddPostModal({ currentUser, nostrClient, onClose }) {
       navigate("/");
     } catch (error) {
       console.error("Failed to add post:", error);
-      setError("Nie udało się dodać posta. Spróbuj ponownie.");
+      setError(t('post.addPostFailed'));
     } finally {
       setIsSubmitting(false);
     }
@@ -60,7 +62,7 @@ function AddPostModal({ currentUser, nostrClient, onClose }) {
     <div className="modal-overlay">
       <div className="modal add-post-modal">
         <div className="modal-header">
-          <h2>Dodaj nowy post</h2>
+          <h2>{t('post.addNewPost')}</h2>
           <button type="button" className="close-btn" onClick={onClose}>
             &times;
           </button>
@@ -68,37 +70,37 @@ function AddPostModal({ currentUser, nostrClient, onClose }) {
 
         <form onSubmit={handleSubmit} className="add-post-form">
           <div className="form-group">
-            <label htmlFor="post-title">Tytuł</label>
+            <label htmlFor="post-title">{t('post.title')}</label>
             <input
               id="post-title"
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Wpisz tytuł posta..."
+              placeholder={t('post.titlePlaceholder')}
               required
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="post-content">Treść</label>
+            <label htmlFor="post-content">{t('post.content')}</label>
             <textarea
               id="post-content"
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              placeholder="Wpisz treść posta..."
+              placeholder={t('post.contentPlaceholder')}
               rows={10}
               required
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="post-tags">Tagi (oddzielone przecinkami)</label>
+            <label htmlFor="post-tags">{t('post.tags')}</label>
             <input
               id="post-tags"
               type="text"
               value={tags}
               onChange={(e) => setTags(e.target.value)}
-              placeholder="np. nostr, technologia, wykop"
+              placeholder={t('post.tagsPlaceholder')}
             />
           </div>
 
@@ -111,14 +113,14 @@ function AddPostModal({ currentUser, nostrClient, onClose }) {
               className="cancel-btn"
               disabled={isSubmitting}
             >
-              Anuluj
+              {t('common.cancel')}
             </button>
             <button
               type="submit"
               className="submit-btn"
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Publikowanie..." : "Opublikuj post"}
+              {isSubmitting ? t('post.publishing') : t('post.publish')}
             </button>
           </div>
         </form>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
+import useTranslate from "./utils/useTranslate";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import MainFeed from "./components/MainFeed";
@@ -10,6 +11,7 @@ import NostrClient from "./services/NostrClient";
 import "./App.css";
 
 function App() {
+  const { t } = useTranslate();
   const [currentUser, setCurrentUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [nostrClient, setNostrClient] = useState(null);
@@ -56,7 +58,7 @@ function App() {
   };
 
   if (isLoading) {
-    return <div className="loading">Ładowanie...</div>;
+    return <div className="loading">{t('common.loading')}</div>;
   }
 
   return (

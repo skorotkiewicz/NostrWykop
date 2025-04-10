@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
 import { timeAgo } from "../utils/dateUtils";
+import useTranslate from "../utils/useTranslate";
 
 function Post({ post, currentUser, onVote, compact = false }) {
+  const { t } = useTranslate();
   const hasVoted = currentUser && post.userVoted;
 
   return (
@@ -61,7 +63,9 @@ function Post({ post, currentUser, onVote, compact = false }) {
           <div className="post-stats">
             <span className="comments-count">
               <Link to={`/post/${post.id}`}>
-                {post.commentsCount} komentarzy
+                {post.commentsCount} {post.commentsCount === 1 ? t('common.oneComment') : 
+                   (post.commentsCount > 1 && post.commentsCount < 5) ? t('common.twoComments') : 
+                   t('common.comments')}
               </Link>
             </span>
           </div>

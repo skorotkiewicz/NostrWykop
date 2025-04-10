@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import useTranslate from "../utils/useTranslate";
 
 function Sidebar({ nostrClient, currentUser }) {
+  const { t } = useTranslate();
   const [popularTags, setPopularTags] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("home");
@@ -13,8 +15,8 @@ function Sidebar({ nostrClient, currentUser }) {
     // Ustaw aktywną zakładkę i feed na podstawie aktualnej ścieżki i parametrów
     const path = location.pathname;
     const searchParams = new URLSearchParams(location.search);
-    const sortParam = searchParams.get('sort');
-    
+    const sortParam = searchParams.get("sort");
+
     // Obsługa głównych ścieżek i sortowania
     if (path === "/") {
       if (sortParam === "hot") {
@@ -27,7 +29,7 @@ function Sidebar({ nostrClient, currentUser }) {
         setActiveTab("home");
       }
       setActiveFeed(null);
-    } 
+    }
     // Obsługa ścieżek /feed/*
     else if (path.startsWith("/feed/")) {
       setActiveTab(null);
@@ -137,7 +139,7 @@ function Sidebar({ nostrClient, currentUser }) {
               className={`nav-link ${activeTab === "home" ? "active" : ""}`}
               onClick={() => handleTabClick("home")}
             >
-              Strona główna
+              {t("header.home")}
             </button>
           </li>
           <li>
@@ -146,7 +148,7 @@ function Sidebar({ nostrClient, currentUser }) {
               className={`nav-link ${activeTab === "hot" ? "active" : ""}`}
               onClick={() => handleTabClick("hot")}
             >
-              Gorące
+              {t("feeds.hot")}
             </button>
           </li>
           <li>
@@ -155,7 +157,7 @@ function Sidebar({ nostrClient, currentUser }) {
               className={`nav-link ${activeTab === "active" ? "active" : ""}`}
               onClick={() => handleTabClick("active")}
             >
-              Aktywne
+              {t("feeds.active")}
             </button>
           </li>
           <li>
@@ -164,7 +166,7 @@ function Sidebar({ nostrClient, currentUser }) {
               className={`nav-link ${activeTab === "latest" ? "active" : ""}`}
               onClick={() => handleTabClick("latest")}
             >
-              Najnowsze
+              {t("feeds.latest")}
             </button>
           </li>
         </ul>
@@ -172,63 +174,69 @@ function Sidebar({ nostrClient, currentUser }) {
 
       {currentUser && (
         <div className="user-feeds">
-          <h3>Twoje feedy</h3>
+          <h3>{t("feeds.yourFeeds")}</h3>
           <ul>
             <li>
-              <Link 
-                to="/feed/followed" 
+              <Link
+                to="/feed/followed"
                 className={activeFeed === "followed" ? "active" : ""}
                 onClick={() => setActiveFeed("followed")}
               >
-                Obserwowani użytkownicy
+                {t("feeds.followedUsers")}
               </Link>
             </li>
             <li>
-              <Link 
-                to="/feed/saved" 
+              <Link
+                to="/feed/saved"
                 className={activeFeed === "saved" ? "active" : ""}
                 onClick={() => setActiveFeed("saved")}
               >
-                Zapisane posty
+                {t("feeds.savedPosts")}
               </Link>
             </li>
             <li>
-              <Link 
-                to="/feed/upvoted" 
+              <Link
+                to="/feed/upvoted"
                 className={activeFeed === "upvoted" ? "active" : ""}
                 onClick={() => setActiveFeed("upvoted")}
               >
-                Wykopane
+                {t("feeds.upvoted")}
               </Link>
             </li>
             <li>
-              <Link 
-                to="/feed/downvoted" 
+              <Link
+                to="/feed/downvoted"
                 className={activeFeed === "downvoted" ? "active" : ""}
                 onClick={() => setActiveFeed("downvoted")}
               >
-                Zakopane
+                {t("feeds.downvoted")}
               </Link>
             </li>
           </ul>
-          
+
           {activeFeed && (
             <div className="feed-sort">
-              <span>Sortuj:</span>
+              <span>{t("feeds.sort")}</span>
               <div className="sort-options">
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   onClick={() => navigate(`/feed/${activeFeed}?sort=newest`)}
-                  className={location.search.includes("sort=newest") || !location.search ? "active" : ""}
+                  className={
+                    location.search.includes("sort=newest") || !location.search
+                      ? "active"
+                      : ""
+                  }
                 >
-                  Najnowsze
+                  {t("feeds.newest")}
                 </button>
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   onClick={() => navigate(`/feed/${activeFeed}?sort=hot`)}
-                  className={location.search.includes("sort=hot") ? "active" : ""}
+                  className={
+                    location.search.includes("sort=hot") ? "active" : ""
+                  }
                 >
-                  Gorące
+                  {t("feeds.hot")}
                 </button>
               </div>
             </div>
@@ -237,16 +245,16 @@ function Sidebar({ nostrClient, currentUser }) {
       )}
 
       <div className="popular-tags">
-        <h3>Popularne tagi</h3>
+        <h3>{t("sidebar.popularTags")}</h3>
         {isLoading ? (
-          <div className="loading-tags">Ładowanie tagów...</div>
+          <div className="loading-tags">{t("common.loadingTags")}</div>
         ) : (
           <ul>
             {popularTags.map((tag) => {
               const isActive = location.pathname === `/tag/${tag.name}`;
               return (
                 <li key={tag.name}>
-                  <Link 
+                  <Link
                     to={`/tag/${tag.name}`}
                     className={isActive ? "active" : ""}
                   >
@@ -257,40 +265,46 @@ function Sidebar({ nostrClient, currentUser }) {
             })}
           </ul>
         )}
-        
+
         {location.pathname.startsWith("/tag/") && (
           <div className="tag-sort">
-            <span>Sortuj tag:</span>
+            <span>{t("feeds.sortTag")}</span>
             <div className="sort-options">
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={() => {
                   const tagName = location.pathname.split("/tag/")[1];
                   navigate(`/tag/${tagName}?sort=newest`);
                 }}
-                className={location.search.includes("sort=newest") || !location.search ? "active" : ""}
+                className={
+                  location.search.includes("sort=newest") || !location.search
+                    ? "active"
+                    : ""
+                }
               >
-                Najnowsze
+                {t("feeds.newest")}
               </button>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={() => {
                   const tagName = location.pathname.split("/tag/")[1];
                   navigate(`/tag/${tagName}?sort=hot`);
                 }}
                 className={location.search.includes("sort=hot") ? "active" : ""}
               >
-                Gorące
+                {t("feeds.hot")}
               </button>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={() => {
                   const tagName = location.pathname.split("/tag/")[1];
                   navigate(`/tag/${tagName}?sort=active`);
                 }}
-                className={location.search.includes("sort=active") ? "active" : ""}
+                className={
+                  location.search.includes("sort=active") ? "active" : ""
+                }
               >
-                Aktywne
+                {t("feeds.active")}
               </button>
             </div>
           </div>
@@ -299,12 +313,8 @@ function Sidebar({ nostrClient, currentUser }) {
 
       <div className="sidebar-footer">
         <div className="about-section">
-          <h3>O NostrWykop</h3>
-          <p>
-            NostrWykop to społecznościowy serwis oparty na protokole Nostr,
-            umożliwiający wykopywanie i zakopywanie interesujących treści z
-            sieci.
-          </p>
+          <h3>{t("sidebar.about")}</h3>
+          <p>{t("sidebar.aboutText")}</p>
         </div>
         <div className="social-links">
           <a

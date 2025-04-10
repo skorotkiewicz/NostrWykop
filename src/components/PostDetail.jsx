@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import Comment from "./Comment";
 import { timeAgo } from "../utils/dateUtils";
+import useTranslate from "../utils/useTranslate";
 
 function PostDetail({ nostrClient, currentUser }) {
+  const { t } = useTranslate();
   const { id } = useParams();
   const [post, setPost] = useState(null);
   const [comments, setComments] = useState([]);
@@ -35,7 +37,7 @@ function PostDetail({ nostrClient, currentUser }) {
 
   const handleVote = async (isUpvote) => {
     if (!currentUser) {
-      alert("Musisz być zalogowany, aby głosować!");
+      alert(t('post.loginToVote'));
       return;
     }
 
@@ -55,7 +57,7 @@ function PostDetail({ nostrClient, currentUser }) {
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
     if (!currentUser) {
-      alert("Musisz być zalogowany, aby dodać komentarz!");
+      alert(t('post.loginToComment'));
       return;
     }
 
@@ -71,11 +73,11 @@ function PostDetail({ nostrClient, currentUser }) {
   };
 
   if (isLoading) {
-    return <div className="loading">Ładowanie szczegółów posta...</div>;
+    return <div className="loading">{t('post.loadingPostDetails')}</div>;
   }
 
   if (!post) {
-    return <div className="not-found">Post nie został znaleziony</div>;
+    return <div className="not-found">{t('post.postNotFound')}</div>;
   }
 
   return (
@@ -163,17 +165,17 @@ function PostDetail({ nostrClient, currentUser }) {
       </div>
 
       <div className="comments-section">
-        <h2>Komentarze ({comments.length})</h2>
+        <h2>{t('post.comments')} ({comments.length})</h2>
 
         {currentUser && (
           <form className="comment-form" onSubmit={handleCommentSubmit}>
             <textarea
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
-              placeholder="Napisz komentarz..."
+              placeholder={t('post.writeComment')}
               required
             />
-            <button type="submit">Dodaj komentarz</button>
+            <button type="submit">{t('post.addComment')}</button>
           </form>
         )}
 
@@ -188,7 +190,7 @@ function PostDetail({ nostrClient, currentUser }) {
               />
             ))
           ) : (
-            <div className="no-comments">Brak komentarzy</div>
+            <div className="no-comments">{t('post.noComments')}</div>
           )}
         </div>
       </div>

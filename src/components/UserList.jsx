@@ -1,15 +1,17 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import useTranslate from "../utils/useTranslate";
 
 function UserList({ users, isLoading, title }) {
+  const { t } = useTranslate();
   if (isLoading) {
-    return <div className="loading">Ładowanie użytkowników...</div>;
+    return <div className="loading">{t('userList.loadingUsers')}</div>;
   }
 
   if (!users || users.length === 0) {
     return (
       <div className="no-content">
-        Brak użytkowników do wyświetlenia
+        {t('userList.noUsers')}
       </div>
     );
   }
@@ -22,7 +24,7 @@ function UserList({ users, isLoading, title }) {
           <Link to={`/profile/${user.pubkey}`} key={user.pubkey} className="user-card">
             <div className="user-avatar">
               {user.avatar ? (
-                <img src={user.avatar} alt={user.name || "Avatar"} />
+                <img src={user.avatar} alt={user.name || t('userList.avatar')} />
               ) : (
                 <div className="default-avatar">
                   {user.name?.[0] || user.pubkey[0]}

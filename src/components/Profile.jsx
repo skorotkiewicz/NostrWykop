@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
+import useTranslate from "../utils/useTranslate";
 import Post from "./Post";
 import Comment from "./Comment";
 import UserList from "./UserList";
 
 function Profile({ nostrClient, currentUser }) {
+  const { t } = useTranslate();
   const { pubkey } = useParams();
   const [profile, setProfile] = useState(null);
   const [userPosts, setUserPosts] = useState([]);
@@ -276,7 +278,7 @@ function Profile({ nostrClient, currentUser }) {
 
   const handleFollow = async () => {
     if (!currentUser) {
-      alert("Musisz być zalogowany, aby obserwować użytkowników!");
+      alert(t('profile.loginToFollow'));
       return;
     }
 
@@ -302,7 +304,7 @@ function Profile({ nostrClient, currentUser }) {
 
   const handleVote = async (postId, isUpvote) => {
     if (!currentUser) {
-      alert("Musisz być zalogowany, aby głosować!");
+      alert(t('profile.loginToVote'));
       return;
     }
 
@@ -328,7 +330,7 @@ function Profile({ nostrClient, currentUser }) {
 
   const handleCommentVote = async (commentId, isUpvote) => {
     if (!currentUser) {
-      alert("Musisz być zalogowany, aby głosować!");
+      alert(t('profile.loginToVote'));
       return;
     }
 
@@ -353,11 +355,11 @@ function Profile({ nostrClient, currentUser }) {
   };
 
   if (isLoading) {
-    return <div className="loading">Ładowanie profilu użytkownika...</div>;
+    return <div className="loading">{t('profile.loadingProfile')}</div>;
   }
 
   if (!profile) {
-    return <div className="not-found">Profil nie został znaleziony</div>;
+    return <div className="not-found">{t('profile.profileNotFound')}</div>;
   }
 
   return (
@@ -365,7 +367,7 @@ function Profile({ nostrClient, currentUser }) {
       <div className="profile-header">
         <div className="profile-avatar">
           {profile.avatar ? (
-            <img src={profile.avatar} alt={profile.name || "Avatar"} />
+            <img src={profile.avatar} alt={profile.name || t('profile.avatar')} />
           ) : (
             <div className="default-avatar">
               {profile.name?.[0] || pubkey[0]}
@@ -383,7 +385,7 @@ function Profile({ nostrClient, currentUser }) {
           <div className="profile-stats">
             <div className="stat">
               <span className="stat-value">{profileStats.postsCount}</span>
-              <span className="stat-label">Posty</span>
+              <span className="stat-label">{t('profile.posts')}</span>
             </div>
             {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
             <div
@@ -391,7 +393,7 @@ function Profile({ nostrClient, currentUser }) {
               onClick={() => handleShowFollowers()}
             >
               <span className="stat-value">{profileStats.followersCount}</span>
-              <span className="stat-label">Obserwujący</span>
+              <span className="stat-label">{t('profile.followers')}</span>
             </div>
             {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
             <div
@@ -399,7 +401,7 @@ function Profile({ nostrClient, currentUser }) {
               onClick={() => handleShowFollowing()}
             >
               <span className="stat-value">{profileStats.followingCount}</span>
-              <span className="stat-label">Obserwuje</span>
+              <span className="stat-label">{t('profile.following')}</span>
             </div>
           </div>
 
@@ -409,7 +411,7 @@ function Profile({ nostrClient, currentUser }) {
               onClick={handleFollow}
               className={`follow-btn ${isFollowing ? "following" : ""}`}
             >
-              {isFollowing ? "Obserwujesz" : "Obserwuj"}
+              {isFollowing ? t('profile.youFollow') : t('profile.follow')}
             </button>
           )}
         </div>
@@ -421,30 +423,30 @@ function Profile({ nostrClient, currentUser }) {
           className={`tab ${activeTab === "posts" ? "active" : ""}`}
           onClick={() => setActiveTab("posts")}
         >
-          Posty ({userPosts.length})
+          {t('profile.posts')} ({userPosts.length})
         </button>
         <button
           type="button"
           className={`tab ${activeTab === "comments" ? "active" : ""}`}
           onClick={() => setActiveTab("comments")}
         >
-          Komentarze ({userComments.length})
+          {t('profile.comments')} ({userComments.length})
         </button>
         <button
           type="button"
           className={`tab ${activeTab === "votes" ? "active" : ""}`}
           onClick={() => setActiveTab("votes")}
         >
-          Zakopane/Wykopane ({userVotes.length})
+          {t('profile.votedPosts')} ({userVotes.length})
         </button>
         {activeTab === "followers" && (
           <button type="button" className="tab active">
-            Obserwujący ({followers.length})
+            {t('profile.followers')} ({followers.length})
           </button>
         )}
         {activeTab === "following" && (
           <button type="button" className="tab active">
-            Obserwuje ({following.length})
+            {t('profile.following')} ({following.length})
           </button>
         )}
       </div>
@@ -463,7 +465,7 @@ function Profile({ nostrClient, currentUser }) {
               ))
             ) : (
               <div className="no-content">
-                Ten użytkownik nie dodał jeszcze żadnych postów
+                {t('profile.noPosts')}
               </div>
             )}
           </div>
@@ -479,7 +481,7 @@ function Profile({ nostrClient, currentUser }) {
                       <Link to={`/post/${comment.parentPost.id}`}>
                         <h4>{comment.parentPost.title}</h4>
                         <p className="post-author">
-                          przez{" "}
+                          {t('profile.by')}{" "}
                           {comment.parentPost.author.name ||
                             comment.parentPost.author.pubkey.substring(0, 8)}
                         </p>
@@ -496,7 +498,7 @@ function Profile({ nostrClient, currentUser }) {
               ))
             ) : (
               <div className="no-content">
-                Ten użytkownik nie dodał jeszcze żadnych komentarzy
+                {t('profile.noComments')}
               </div>
             )}
           </div>
@@ -510,7 +512,7 @@ function Profile({ nostrClient, currentUser }) {
                   <div
                     className={`vote-indicator ${vote.isUpvote ? "upvote" : "downvote"}`}
                   >
-                    {vote.isUpvote ? "✓ Wykopane" : "✗ Zakopane"}
+                    {vote.isUpvote ? t('profile.upvoted') : t('profile.downvoted')}
                   </div>
                   {vote.post && (
                     <Post
@@ -525,8 +527,7 @@ function Profile({ nostrClient, currentUser }) {
               ))
             ) : (
               <div className="no-content">
-                Ten użytkownik nie wykopał ani nie zakopał jeszcze żadnych
-                postów
+                {t('profile.noVotes')}
               </div>
             )}
           </div>
@@ -536,7 +537,7 @@ function Profile({ nostrClient, currentUser }) {
           <UserList
             users={followers}
             isLoading={isLoadingUsers}
-            title="Osoby obserwujące"
+            title={t('profile.followersTab')}
           />
         )}
 
@@ -544,7 +545,7 @@ function Profile({ nostrClient, currentUser }) {
           <UserList
             users={following}
             isLoading={isLoadingUsers}
-            title="Osoby obserwowane"
+            title={t('profile.followingTab')}
           />
         )}
       </div>

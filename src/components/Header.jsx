@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import useTranslate from "../utils/useTranslate";
 import NostrLogin from "./NostrLogin";
 import AddPostModal from "./AddPostModal";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 function Header({ currentUser, onLogin, onLogout, nostrClient }) {
+  const { t } = useTranslate();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showAddPostModal, setShowAddPostModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -25,7 +28,7 @@ function Header({ currentUser, onLogin, onLogout, nostrClient }) {
         <form className="search-bar" onSubmit={handleSearch}>
           <input 
             type="text" 
-            placeholder="Szukaj..." 
+            placeholder={t('search.searchPlaceholder')} 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -33,6 +36,7 @@ function Header({ currentUser, onLogin, onLogout, nostrClient }) {
         </form>
       </div>
       <div className="header-right">
+        <LanguageSwitcher />
         {currentUser ? (
           <>
             <Link
@@ -46,10 +50,10 @@ function Header({ currentUser, onLogin, onLogout, nostrClient }) {
               className="add-post-btn"
               onClick={() => setShowAddPostModal(true)}
             >
-              + Dodaj post
+              + {t('post.addPost')}
             </button>
             <button type="button" onClick={onLogout} className="logout-btn">
-              Wyloguj
+              {t('header.logout')}
             </button>
           </>
         ) : (
@@ -58,7 +62,7 @@ function Header({ currentUser, onLogin, onLogout, nostrClient }) {
             onClick={() => setShowLoginModal(true)}
             className="login-btn"
           >
-            Zaloguj się
+            {t('header.login')}
           </button>
         )}
       </div>

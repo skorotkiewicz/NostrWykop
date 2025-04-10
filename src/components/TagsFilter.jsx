@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
+import useTranslate from "../utils/useTranslate";
 
 function TagsFilter({ selectedTags, onTagSelect }) {
+  const { t } = useTranslate();
   const [popularTags, setPopularTags] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showAll, setShowAll] = useState(false);
@@ -36,14 +38,14 @@ function TagsFilter({ selectedTags, onTagSelect }) {
 
   return (
     <div className="tags-filter">
-      <h3>Filtruj po tagach</h3>
+      <h3>{t('tagsFilter.filterByTags')}</h3>
 
       <div className="search-tags">
         <input
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Szukaj tagów..."
+          placeholder={t('tagsFilter.searchTags')}
         />
       </div>
 
@@ -65,7 +67,7 @@ function TagsFilter({ selectedTags, onTagSelect }) {
             className="show-more-btn"
             onClick={() => setShowAll(true)}
           >
-            Pokaż więcej tagów
+            {t('tagsFilter.showMore')}
           </button>
         )}
 
@@ -75,14 +77,14 @@ function TagsFilter({ selectedTags, onTagSelect }) {
             className="show-less-btn"
             onClick={() => setShowAll(false)}
           >
-            Pokaż mniej
+            {t('tagsFilter.showLess')}
           </button>
         )}
       </div>
 
       {selectedTags.length > 0 && (
         <div className="selected-tags">
-          <h4>Wybrane tagi:</h4>
+          <h4>{t('tagsFilter.selectedTags')}</h4>
           <div className="selected-tags-list">
             {selectedTags.map((tag) => (
               <span key={tag} className="selected-tag">
@@ -106,7 +108,7 @@ function TagsFilter({ selectedTags, onTagSelect }) {
                 }
               }}
             >
-              Wyczyść wszystkie
+              {t('tagsFilter.clearAll')}
             </button>
           </div>
         </div>

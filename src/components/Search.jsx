@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
+import useTranslate from "../utils/useTranslate";
 import Post from "./Post";
 
 function Search({ nostrClient, currentUser }) {
+  const { t } = useTranslate();
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get("q") || "";
   const [results, setResults] = useState([]);
@@ -25,7 +27,7 @@ function Search({ nostrClient, currentUser }) {
         setResults(searchResults);
       } catch (err) {
         console.error("Search error:", err);
-        setError("Wystąpił błąd podczas wyszukiwania. Spróbuj ponownie później.");
+        setError(t('search.searchError'));
       } finally {
         setIsLoading(false);
       }
@@ -36,7 +38,7 @@ function Search({ nostrClient, currentUser }) {
 
   const handleVote = async (postId, isUpvote) => {
     if (!currentUser) {
-      alert("Musisz być zalogowany, aby głosować!");
+      alert(t('search.loginToVote'));
       return;
     }
 
@@ -62,15 +64,15 @@ function Search({ nostrClient, currentUser }) {
 
   return (
     <div className="search-results">
-      <h2>Wyniki wyszukiwania dla: "{searchQuery}"</h2>
+      <h2>{t('search.searchResultsFor').replace('{query}', `"${searchQuery}"`)}</h2>
       
-      {isLoading && <div className="loading">Wyszukiwanie...</div>}
+      {isLoading && <div className="loading">{t('search.searching')}</div>}
       
       {error && <div className="error-message">{error}</div>}
       
       {!isLoading && results.length === 0 && !error && (
         <div className="no-results">
-          Nie znaleziono wyników dla "{searchQuery}". Spróbuj innych słów kluczowych.
+          {t('search.noResultsFound').replace('{query}', `"${searchQuery}"`)}
         </div>
       )}
       

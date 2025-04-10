@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { timeAgo } from "../utils/dateUtils";
+import useTranslate from "../utils/useTranslate";
 
 function Comment({
   comment,
@@ -9,6 +10,7 @@ function Comment({
   onVote,
   showReplies = true,
 }) {
+  const { t } = useTranslate();
   const [votes, setVotes] = useState(comment.votes || 0);
   const [userVoted, setUserVoted] = useState(comment.userVoted || null);
   const [replying, setReplying] = useState(false);
@@ -18,7 +20,7 @@ function Comment({
   // Obsługa głosowania na komentarz
   const handleVote = async (isUpvote) => {
     if (!currentUser) {
-      alert("Musisz być zalogowany, aby głosować!");
+      alert(t('comment.loginToVote'));
       return;
     }
 
@@ -36,7 +38,7 @@ function Comment({
         onVote(comment.id, isUpvote);
       }
     } catch (error) {
-      console.error("Failed to vote on comment:", error);
+      console.error(t('comment.failedToVote'), error);
     }
   };
 
@@ -44,7 +46,7 @@ function Comment({
   const handleReplySubmit = async (e) => {
     e.preventDefault();
     if (!currentUser || !nostrClient) {
-      alert("Musisz być zalogowany, aby odpowiedzieć!");
+      alert(t('comment.loginToReply'));
       return;
     }
 
@@ -56,7 +58,7 @@ function Comment({
       setReplyContent("");
       setReplying(false);
     } catch (error) {
-      console.error("Failed to add reply:", error);
+      console.error(t('comment.failedToReply'), error);
     }
   };
 
@@ -102,7 +104,7 @@ function Comment({
               onClick={() => setReplying(!replying)}
               className="reply-btn"
             >
-              {replying ? "Anuluj" : "Odpowiedz"}
+              {replying ? t('comment.cancel') : t('comment.reply')}
             </button>
           )}
         </div>
@@ -112,10 +114,10 @@ function Comment({
             <textarea
               value={replyContent}
               onChange={(e) => setReplyContent(e.target.value)}
-              placeholder="Napisz odpowiedź..."
+              placeholder={t('comment.writeReply')}
               required
             />
-            <button type="submit">Wyślij</button>
+            <button type="submit">{t('comment.send')}</button>
           </form>
         )}
 

@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
+import useTranslate from "../utils/useTranslate";
 import Post from "./Post";
 import TagsFilter from "./TagsFilter";
 
 function MainFeed({ nostrClient, currentUser, feedType }) {
+  const { t } = useTranslate();
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("hot");
@@ -58,7 +60,7 @@ function MainFeed({ nostrClient, currentUser, feedType }) {
             tags: [tag],
             sort: activeTab,
           });
-          setFeedTitle(`Tag: #${tag}`);
+          setFeedTitle(t('feeds.tagHeading').replace('{tag}', tag));
         }
         // Feedy użytkownika
         else if (feedType === "user" && type) {
@@ -80,7 +82,7 @@ function MainFeed({ nostrClient, currentUser, feedType }) {
                   );
                 }
               }
-              setFeedTitle("Obserwowani użytkownicy");
+              setFeedTitle(t('feeds.followedUsersHeading'));
               break;
 
             case "upvoted":
@@ -91,7 +93,7 @@ function MainFeed({ nostrClient, currentUser, feedType }) {
                   true,
                 );
               }
-              setFeedTitle("Wykopane przez Ciebie");
+              setFeedTitle(t('feeds.upvotedHeading'));
               break;
 
             case "downvoted":
@@ -102,7 +104,7 @@ function MainFeed({ nostrClient, currentUser, feedType }) {
                   false,
                 );
               }
-              setFeedTitle("Zakopane przez Ciebie");
+              setFeedTitle(t('feeds.downvotedHeading'));
               break;
 
             case "saved":
@@ -112,7 +114,7 @@ function MainFeed({ nostrClient, currentUser, feedType }) {
                   currentUser.pubkey,
                 );
               }
-              setFeedTitle("Zapisane posty");
+              setFeedTitle(t('feeds.savedHeading'));
               break;
 
             default:
@@ -156,7 +158,7 @@ function MainFeed({ nostrClient, currentUser, feedType }) {
 
   const handleVote = async (postId, isUpvote) => {
     if (!currentUser) {
-      alert("Musisz być zalogowany, aby głosować!");
+      alert(t('feeds.loginToVote'));
       return;
     }
 
@@ -205,21 +207,21 @@ function MainFeed({ nostrClient, currentUser, feedType }) {
           className={`tab ${activeTab === "hot" ? "active" : ""}`}
           onClick={() => handleTabClick("hot")}
         >
-          Gorące
+          {t('feeds.hot')}
         </button>
         <button
           type="button"
           className={`tab ${activeTab === "newest" ? "active" : ""}`}
           onClick={() => handleTabClick("newest")}
         >
-          Najnowsze
+          {t('feeds.newest')}
         </button>
         <button
           type="button"
           className={`tab ${activeTab === "active" ? "active" : ""}`}
           onClick={() => handleTabClick("active")}
         >
-          Aktywne
+          {t('feeds.active')}
         </button>
       </div>
 
@@ -228,7 +230,7 @@ function MainFeed({ nostrClient, currentUser, feedType }) {
       )}
 
       {isLoading ? (
-        <div className="loading">Ładowanie postów...</div>
+        <div className="loading">{t('feeds.loadingPosts')}</div>
       ) : (
         <div className="posts-list">
           {posts.length > 0 ? (
@@ -243,8 +245,8 @@ function MainFeed({ nostrClient, currentUser, feedType }) {
           ) : (
             <div className="no-posts">
               {feedType === "user"
-                ? "Brak postów w tym feedzie. Sprawdź inne kategorie lub wróć później."
-                : "Brak postów do wyświetlenia"}
+                ? t('feeds.noPosts')
+                : t('feeds.noPostsToShow')}
             </div>
           )}
         </div>
@@ -256,11 +258,11 @@ function MainFeed({ nostrClient, currentUser, feedType }) {
           onClick={() => setPage(page - 1)}
           disabled={page === 1}
         >
-          Poprzednia
+          {t('feeds.previous')}
         </button>
-        <span>Strona {page}</span>
+        <span>{t('feeds.page').replace('{page}', page)}</span>
         <button type="button" onClick={() => setPage(page + 1)}>
-          Następna
+          {t('feeds.next')}
         </button>
       </div>
     </div>
