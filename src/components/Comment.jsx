@@ -2,13 +2,20 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { timeAgo } from "../utils/dateUtils";
 
-function Comment({ comment, currentUser, nostrClient }) {
+function Comment({
+  comment,
+  currentUser,
+  nostrClient,
+  onVote,
+  showReplies = true,
+}) {
   const [votes, setVotes] = useState(comment.votes || 0);
   const [userVoted, setUserVoted] = useState(comment.userVoted || null);
   const [replying, setReplying] = useState(false);
   const [replyContent, setReplyContent] = useState("");
   const [childComments, setChildComments] = useState(comment.replies || []);
 
+  // Obsługa głosowania na komentarz
   const handleVote = async (isUpvote) => {
     if (!currentUser) {
       alert("Musisz być zalogowany, aby głosować!");
@@ -16,17 +23,27 @@ function Comment({ comment, currentUser, nostrClient }) {
     }
 
     try {
-      await nostrClient.voteOnComment(comment.id, isUpvote);
+      if (nostrClient) {
+        await nostrClient.voteOnComment(comment.id, isUpvote);
+      }
+
+      // Aktualizuj lokalny stan głosów
       setVotes((prev) => (isUpvote ? prev + 1 : prev - 1));
       setUserVoted(isUpvote ? "up" : "down");
+
+      // Jeśli przekazano funkcję onVote, wywołaj ją
+      if (onVote) {
+        onVote(comment.id, isUpvote);
+      }
     } catch (error) {
       console.error("Failed to vote on comment:", error);
     }
   };
 
+  // Obsługa wysyłania odpowiedzi
   const handleReplySubmit = async (e) => {
     e.preventDefault();
-    if (!currentUser) {
+    if (!currentUser || !nostrClient) {
       alert("Musisz być zalogowany, aby odpowiedzieć!");
       return;
     }
@@ -68,10 +85,10 @@ function Comment({ comment, currentUser, nostrClient }) {
       <div className="comment-content">
         <div className="comment-header">
           <Link
-            to={`/profile/${comment.author.pubkey}`}
+            to={`/profile/${comment?.author?.pubkey}`}
             className="comment-author"
           >
-            {comment.author.name || comment.author.pubkey.substring(0, 8)}
+            {comment?.author?.name || comment?.author?.pubkey.substring(0, 8)}
           </Link>
           <span className="comment-time">{timeAgo(comment.createdAt)}</span>
         </div>
@@ -79,7 +96,7 @@ function Comment({ comment, currentUser, nostrClient }) {
         <div className="comment-text">{comment.content}</div>
 
         <div className="comment-actions">
-          {currentUser && (
+          {currentUser && nostrClient && (
             <button
               type="button"
               onClick={() => setReplying(!replying)}
@@ -102,7 +119,7 @@ function Comment({ comment, currentUser, nostrClient }) {
           </form>
         )}
 
-        {childComments.length > 0 && (
+        {showReplies && childComments.length > 0 && (
           <div className="child-comments">
             {childComments.map((reply) => (
               <Comment
@@ -110,6 +127,8 @@ function Comment({ comment, currentUser, nostrClient }) {
                 comment={reply}
                 currentUser={currentUser}
                 nostrClient={nostrClient}
+                onVote={onVote}
+                showReplies={true}
               />
             ))}
           </div>

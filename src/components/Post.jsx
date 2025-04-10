@@ -1,16 +1,16 @@
 import { Link } from "react-router-dom";
 import { timeAgo } from "../utils/dateUtils";
 
-function Post({ post, currentUser, onVote }) {
+function Post({ post, currentUser, onVote, compact = false }) {
   const hasVoted = currentUser && post.userVoted;
 
   return (
-    <div className="post">
+    <div className={`post ${compact ? "post-compact" : ""}`}>
       <div className="post-votes">
         <button
           type="button"
           className={`vote-btn upvote ${hasVoted === "up" ? "voted" : ""}`}
-          onClick={() => onVote(post.id, true)}
+          onClick={() => onVote?.(post.id, true)}
           disabled={!currentUser || hasVoted === "up"}
         >
           ▲
@@ -19,7 +19,7 @@ function Post({ post, currentUser, onVote }) {
         <button
           type="button"
           className={`vote-btn downvote ${hasVoted === "down" ? "voted" : ""}`}
-          onClick={() => onVote(post.id, false)}
+          onClick={() => onVote?.(post.id, false)}
           disabled={!currentUser || hasVoted === "down"}
         >
           ▼
@@ -27,17 +27,17 @@ function Post({ post, currentUser, onVote }) {
       </div>
 
       <div className="post-content">
-        <h2 className="post-title">
+        <h2 className={`post-title ${compact ? "title-compact" : ""}`}>
           <Link to={`/post/${post.id}`}>{post.title}</Link>
         </h2>
 
-        {post.image && (
+        {!compact && post.image && (
           <div className="post-image">
             <img src={post.image} alt={post.title} />
           </div>
         )}
 
-        <div className="post-summary">{post.summary}</div>
+        {!compact && <div className="post-summary">{post.summary}</div>}
 
         <div className="post-meta">
           <span className="post-author">
@@ -46,20 +46,26 @@ function Post({ post, currentUser, onVote }) {
             </Link>
           </span>
           <span className="post-time">{timeAgo(post.createdAt)}</span>
-          <div className="post-tags">
-            {post.tags.map((tag) => (
-              <span key={tag} className="post-tag">
-                #{tag}
-              </span>
-            ))}
-          </div>
+          {!compact && (
+            <div className="post-tags">
+              {post.tags?.map((tag) => (
+                <span key={tag} className="post-tag">
+                  #{tag}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
 
-        <div className="post-stats">
-          <span className="comments-count">
-            <Link to={`/post/${post.id}`}>{post.commentsCount} komentarzy</Link>
-          </span>
-        </div>
+        {!compact && (
+          <div className="post-stats">
+            <span className="comments-count">
+              <Link to={`/post/${post.id}`}>
+                {post.commentsCount} komentarzy
+              </Link>
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );
