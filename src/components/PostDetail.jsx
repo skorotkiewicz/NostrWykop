@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import Comment from "./Comment";
+import { timeAgo } from "../utils/dateUtils";
 
 function PostDetail({ nostrClient, currentUser }) {
   const { id } = useParams();
@@ -101,17 +102,6 @@ function PostDetail({ nostrClient, currentUser }) {
         </div>
 
         <h1 className="post-title">{post.title}</h1>
-
-        <div className="post-meta">
-          <span className="post-author">
-            <Link to={`/profile/${post.author.pubkey}`}>
-              {post.author.name || post.author.pubkey.substring(0, 8)}
-            </Link>
-          </span>
-          <span className="post-time">
-            {new Date(post.createdAt).toLocaleString()}
-          </span>
-        </div>
       </div>
 
       {post.image && (
@@ -122,11 +112,53 @@ function PostDetail({ nostrClient, currentUser }) {
 
       <div className="post-content">{post.content}</div>
 
+      <div className="post-author-container">
+        <div className="comment">
+          <div className="comment-content">
+            <div
+              className="comment-header"
+              style={{ display: "flex", alignItems: "center" }}
+            >
+              <Link
+                to={`/profile/${post.author.pubkey}`}
+                className="comment-author"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  textDecoration: "none",
+                }}
+              >
+                {post.author.avatar ? (
+                  <img
+                    src={post.author.avatar}
+                    alt={" "}
+                    className="author-avatar"
+                  />
+                ) : (
+                  <span className="author-avatar default-avatar">
+                    {post.author.name?.[0] || post.author.pubkey[0]}
+                  </span>
+                )}
+                <span className="author-name" style={{ marginRight: "5px" }}>
+                  {post.author.name || post.author.pubkey.substring(0, 8)}
+                </span>
+              </Link>
+              <span
+                className="post-time"
+                style={{ fontSize: "12px", color: "#666" }}
+              >
+                {timeAgo(post.createdAt)}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="post-tags">
         {post.tags.map((tag) => (
-          <span key={tag} className="post-tag">
+          <Link key={tag} to={`/tag/${tag}`} className="post-tag post-Tager">
             #{tag}
-          </span>
+          </Link>
         ))}
       </div>
 
