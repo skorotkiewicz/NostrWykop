@@ -67,7 +67,7 @@ function App() {
         nostrClient={nostrClient}
       />
       <div className="main-container">
-        <Sidebar />
+        <Sidebar nostrClient={nostrClient} currentUser={currentUser} />
         <main className="content">
           <Routes>
             <Route

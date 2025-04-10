@@ -144,6 +144,9 @@
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
   }
   
   .sidebar-nav ul {
@@ -849,4 +852,91 @@
     .search-bar input {
       width: 100%;
     }
+  }
+
+  /* Dodatkowe style dla nowego Sidebar */
+  .sidebar-nav ul li .nav-link {
+    display: block;
+    padding: 8px 10px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    background-color: transparent;
+    color: var(--text-color);
+    text-align: left;
+    width: 100%;
+    cursor: pointer;
+    border: none;
+  }
+
+  .sidebar-nav ul li .nav-link:hover,
+  .sidebar-nav ul li .nav-link.active {
+    background-color: var(--primary-color);
+    color: white;
+  }
+
+  .user-feeds {
+    margin-top: 10px;
+  }
+
+  .user-feeds h3 {
+    margin-bottom: 15px;
+    font-weight: 600;
+    color: var(--secondary-color);
+    font-size: 16px;
+  }
+
+  .user-feeds ul {
+    list-style: none;
+  }
+
+  .user-feeds ul li {
+    margin-bottom: 8px;
+  }
+
+  .user-feeds ul li a {
+    display: block;
+    padding: 6px 10px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    color: var(--text-color);
+  }
+
+  .user-feeds ul li a:hover {
+    background-color: var(--gray-lighter);
+  }
+
+  .loading-tags {
+    color: var(--gray-light);
+    font-size: 14px;
+    padding: 10px 0;
+  }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .about-section h3 {
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: var(--secondary-color);
+    font-size: 16px;
+  }
+
+  .about-section p {
+    font-size: 12px;
+    color: var(--gray-light);
+    line-height: 1.5;
+    margin-bottom: 15px;
+  }
+
+  .social-links {
+    display: flex;
+    gap: 15px;
+  }
+
+  .social-links a {
+    font-size: 12px;
+    color: var(--link-color);
   }
