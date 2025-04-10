@@ -710,8 +710,97 @@
     margin-top: 20px;
   }
   
+  /* Modal */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    padding: 25px;
+    width: 600px;
+    max-width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .modal-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+  }
+  
+  .close-btn {
+    background-color: transparent;
+    color: var(--gray-light);
+    font-size: 24px;
+    padding: 0;
+  }
+  
+  /* Add Post Form */
+  .add-post-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .form-group label {
+    font-weight: 500;
+    font-size: 14px;
+  }
+  
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  
+  .cancel-btn {
+    background-color: var(--gray-light);
+  }
+  
+  .submit-btn {
+    background-color: var(--primary-color);
+  }
+  
+  .error-message {
+    color: var(--vote-down);
+    font-size: 14px;
+    padding: 10px;
+    background-color: #ffebee;
+    border-radius: 4px;
+    margin-top: 10px;
+  }
+
   /* Loading and error states */
-  .loading, .not-found, .no-posts, .no-comments {
+  .loading, .not-found, .no-content, .no-posts, .no-comments {
     padding: 20px;
     text-align: center;
     color: var(--gray-light);

@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import NostrLogin from "./NostrLogin";
+import AddPostModal from "./AddPostModal";
 
-function Header({ currentUser, onLogin, onLogout }) {
+function Header({ currentUser, onLogin, onLogout, nostrClient }) {
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showAddPostModal, setShowAddPostModal] = useState(false);
 
   return (
     <header className="header">
@@ -25,7 +27,11 @@ function Header({ currentUser, onLogin, onLogout }) {
             >
               {currentUser.name || currentUser.pubkey.substring(0, 8)}
             </Link>
-            <button type="button" className="add-post-btn">
+            <button 
+              type="button" 
+              className="add-post-btn"
+              onClick={() => setShowAddPostModal(true)}
+            >
               + Dodaj post
             </button>
             <button type="button" onClick={onLogout} className="logout-btn">
@@ -46,6 +52,13 @@ function Header({ currentUser, onLogin, onLogout }) {
         <NostrLogin
           onLogin={onLogin}
           onClose={() => setShowLoginModal(false)}
+        />
+      )}
+      {showAddPostModal && (
+        <AddPostModal
+          currentUser={currentUser}
+          nostrClient={nostrClient}
+          onClose={() => setShowAddPostModal(false)}
         />
       )}
     </header>

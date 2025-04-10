@@ -64,6 +64,7 @@ function App() {
         currentUser={currentUser}
         onLogin={handleLogin}
         onLogout={handleLogout}
+        nostrClient={nostrClient}
       />
       <div className="main-container">
         <Sidebar />
