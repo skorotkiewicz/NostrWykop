@@ -232,9 +232,9 @@ function MainFeed({ nostrClient, currentUser, feedType }) {
       ) : (
         <div className="posts-list">
           {posts.length > 0 ? (
-            posts.map((post) => (
+            posts.map((post, key) => (
               <Post
-                key={post.id}
+                key={`${post.id}-${key}`}
                 post={post}
                 currentUser={currentUser}
                 onVote={handleVote}
