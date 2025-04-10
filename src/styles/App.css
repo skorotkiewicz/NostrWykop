@@ -751,7 +751,9 @@ textarea:focus {
   color: var(--gray-light);
 }
 
-.follow-btn {
+.follow-btn,
+.message-btn {
+  margin: 5px;
   padding: 6px 12px;
   border-radius: 20px;
   font-size: 12px;

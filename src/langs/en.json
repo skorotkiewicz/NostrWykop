@@ -46,6 +46,7 @@
       "savedPosts": "Saved posts",
       "upvoted": "Upvoted",
       "downvoted": "Downvoted",
+      "messages": "Messages",
       "sort": "Sort:",
       "sortTag": "Sort tag:",
       "tagHeading": "Tag: #{tag}",
@@ -133,7 +134,9 @@
       "loadingProfile": "Loading user profile...",
       "profileNotFound": "Profile not found",
       "loginToFollow": "You must be logged in to follow users!",
-      "loginToVote": "You must be logged in to vote!"
+      "loginToVote": "You must be logged in to vote!",
+      "loginToMessage": "You must be logged in to send messages!",
+      "sendMessage": "Message"
     },
     "comment": {
       "reply": "Reply",
@@ -180,6 +183,31 @@
       "loginButton": "Login",
       "noNostrAccount": "Don't have a Nostr account yet? You can create keys using various tools, such as:",
       "nos2xForFirefox": "nos2x for Firefox"
+    },
+    "messages": {
+      "directMessages": "Direct Messages",
+      "newMessage": "New Message",
+      "recipient": "Recipient",
+      "message": "Message",
+      "send": "Send",
+      "selectConversation": "Select a conversation from the list or start a new one",
+      "noMessagesYet": "No messages yet",
+      "startConversation": "Start the conversation by sending a message",
+      "typeMessage": "Type your message...",
+      "loadingConversations": "Loading conversations...",
+      "noConversations": "You have no conversations yet",
+      "viewProfile": "View profile",
+      "enterPubkeyOrNpub": "Enter pubkey or npub",
+      "check": "Check",
+      "checking": "Checking...",
+      "writeYourMessage": "Write your message here...",
+      "invalidPubkeyFormat": "Invalid pubkey format. Please use npub or hex format.",
+      "failedToCheckPubkey": "Failed to check recipient pubkey",
+      "failedToFetchConversations": "Failed to fetch conversations",
+      "failedToFetchConversation": "Failed to fetch conversation",
+      "failedToSendMessage": "Failed to send message",
+      "failedToStartConversation": "Failed to start conversation",
+      "loginToAccessMessages": "Please log in to access your messages"
     }
   }
 }

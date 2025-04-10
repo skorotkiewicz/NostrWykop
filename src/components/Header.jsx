@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import useTranslate from "../utils/useTranslate";
 import NostrLogin from "./NostrLogin";
 import AddPostModal from "./AddPostModal";
-// import LanguageSwitcher from "./LanguageSwitcher";
 
 function Header({ currentUser, onLogin, onLogout, nostrClient }) {
   const { t } = useTranslate();
@@ -36,7 +35,6 @@ function Header({ currentUser, onLogin, onLogout, nostrClient }) {
         </form>
       </div>
       <div className="header-right">
-        {/* <LanguageSwitcher /> */}
         {currentUser ? (
           <>
             <Link

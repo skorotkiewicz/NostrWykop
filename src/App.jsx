@@ -7,8 +7,9 @@ import PostDetail from "./pages/PostDetail";
 import Profile from "./pages/Profile";
 import MainFeed from "./pages/MainFeed";
 import Search from "./pages/Search";
+import Messages from "./pages/Messages";
 import NostrClient from "./services/NostrClient";
-import "./App.css";
+import "./styles/App.css";
 
 function App() {
   const { t } = useTranslate();
@@ -118,6 +119,18 @@ function App() {
               path="/search"
               element={
                 <Search nostrClient={nostrClient} currentUser={currentUser} />
+              }
+            />
+            <Route
+              path="/messages"
+              element={
+                <Messages nostrClient={nostrClient} currentUser={currentUser} />
+              }
+            />
+            <Route
+              path="/messages/:pubkey"
+              element={
+                <Messages nostrClient={nostrClient} currentUser={currentUser} />
               }
             />
           </Routes>

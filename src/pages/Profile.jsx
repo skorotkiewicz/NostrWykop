@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import useTranslate from "../utils/useTranslate";
 import Post from "../components/Post";
 import Comment from "../components/Comment";
@@ -8,6 +8,7 @@ import UserList from "../components/UserList";
 function Profile({ nostrClient, currentUser }) {
   const { t } = useTranslate();
   const { pubkey } = useParams();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [userPosts, setUserPosts] = useState([]);
   const [userComments, setUserComments] = useState([]);
@@ -301,6 +302,16 @@ function Profile({ nostrClient, currentUser }) {
       console.error("Failed to follow/unfollow user:", error);
     }
   };
+  
+  const handleMessage = () => {
+    if (!currentUser) {
+      alert(t("profile.loginToMessage"));
+      return;
+    }
+    
+    // Nawigacja do strony wiadomości z wybranym użytkownikiem
+    navigate(`/messages/${pubkey}`);
+  };
 
   const handleVote = async (postId, isUpvote) => {
     if (!currentUser) {
@@ -409,13 +420,22 @@ function Profile({ nostrClient, currentUser }) {
           </div>
 
           {currentUser && currentUser.pubkey !== pubkey && (
-            <button
-              type="button"
-              onClick={handleFollow}
-              className={`follow-btn ${isFollowing ? "following" : ""}`}
-            >
-              {isFollowing ? t("profile.youFollow") : t("profile.follow")}
-            </button>
+            <div className="profile-actions">
+              <button
+                type="button"
+                onClick={handleFollow}
+                className={`follow-btn ${isFollowing ? "following" : ""}`}
+              >
+                {isFollowing ? t("profile.youFollow") : t("profile.follow")}
+              </button>
+              <button
+                type="button"
+                onClick={handleMessage}
+                className="message-btn"
+              >
+                {t("profile.sendMessage")}
+              </button>
+            </div>
           )}
         </div>
       </div>

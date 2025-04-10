@@ -12,14 +12,16 @@ class NostrClient {
     ];
     this.pool = null;
     this.connected = false;
+    this.nip04 = null;
   }
 
   async init() {
     try {
       // Dynamiczne importowanie nostr-tools aby uniknąć problemów z SSR
-      const { SimplePool } = await import("nostr-tools");
+      const { SimplePool, nip04 } = await import("nostr-tools");
 
       this.pool = new SimplePool();
+      this.nip04 = nip04;
       this.connected = true;
 
       // Łączenie z przekaźnikami
@@ -1022,6 +1024,297 @@ class NostrClient {
     console.warn("getSavedPosts method is not fully implemented yet");
     return [];
   }
+
+  // Metody do obsługi bezpośrednich wiadomości (NIP-04)
+
+  // Wysyłanie zaszyfrowanej wiadomości do użytkownika
+  async sendDirectMessage(recipientPubkey, content) {
+    if (!this.connected) {
+      throw new Error("Nostr client not connected");
+    }
+
+    if (!window.nostr) {
+      throw new Error("Nostr extension not found");
+    }
+
+    try {
+      // Normalizujemy klucz publiczny odbiorcy (jeśli jest w formacie npub)
+      let normalizedRecipientPubkey = recipientPubkey;
+      if (recipientPubkey.startsWith("npub")) {
+        try {
+          const { data } = nip19.decode(recipientPubkey);
+          normalizedRecipientPubkey = data;
+        } catch (e) {
+          console.error("Invalid npub format:", e);
+          throw new Error("Invalid recipient public key");
+        }
+      }
+
+      // Pobieramy klucz publiczny nadawcy
+      const senderPubkey = await window.nostr.getPublicKey();
+
+      // Szyfrujemy treść wiadomości używając NIP-04
+      const encryptedContent = await window.nostr.nip04.encrypt(
+        normalizedRecipientPubkey,
+        content,
+      );
+
+      // Tworzymy zdarzenie kind 4 (zaszyfrowana wiadomość bezpośrednia)
+      const event = {
+        kind: 4,
+        pubkey: senderPubkey,
+        tags: [["p", normalizedRecipientPubkey]],
+        content: encryptedContent,
+        created_at: Math.floor(Date.now() / 1000),
+      };
+
+      // Podpisujemy zdarzenie przy użyciu rozszerzenia NIP-07
+      const signedEvent = await window.nostr.signEvent(event);
+
+      // Publikujemy zdarzenie do przekaźników
+      const pubs = this.pool.publish(this.relays, signedEvent);
+      await Promise.all(pubs);
+
+      // Zwracamy utworzoną wiadomość w formacie do wyświetlenia
+      return {
+        id: signedEvent.id,
+        content,
+        sender: senderPubkey,
+        receiver: normalizedRecipientPubkey,
+        createdAt: signedEvent.created_at * 1000,
+        read: true, // Własne wiadomości są od razu oznaczone jako przeczytane
+      };
+    } catch (error) {
+      console.error("Failed to send direct message:", error);
+      throw error;
+    }
+  }
+
+  // Pobieranie historii wiadomości z określonym użytkownikiem
+  async getConversation(otherUserPubkey, limit = 50) {
+    if (!this.connected) {
+      throw new Error("Nostr client not connected");
+    }
+
+    if (!window.nostr) {
+      throw new Error("Nostr extension not found");
+    }
+
+    try {
+      // Normalizujemy klucz publiczny rozmówcy (jeśli jest w formacie npub)
+      let normalizedOtherPubkey = otherUserPubkey;
+      if (otherUserPubkey.startsWith("npub")) {
+        try {
+          const { data } = nip19.decode(otherUserPubkey);
+          normalizedOtherPubkey = data;
+        } catch (e) {
+          console.error("Invalid npub format:", e);
+          throw new Error("Invalid user public key");
+        }
+      }
+
+      // Pobieramy klucz publiczny zalogowanego użytkownika
+      const userPubkey = await window.nostr.getPublicKey();
+
+      // Pobieramy wiadomości wysłane przez użytkownika do rozmówcy
+      const sentFilter = {
+        kinds: [4],
+        authors: [userPubkey],
+        "#p": [normalizedOtherPubkey],
+        limit,
+      };
+
+      // Pobieramy wiadomości otrzymane od rozmówcy
+      const receivedFilter = {
+        kinds: [4],
+        authors: [normalizedOtherPubkey],
+        "#p": [userPubkey],
+        limit,
+      };
+
+      // Wykonujemy równolegle zapytania do przekaźników
+      const [sentEvents, receivedEvents] = await Promise.all([
+        this.pool.querySync(this.relays, sentFilter),
+        this.pool.querySync(this.relays, receivedFilter),
+      ]);
+
+      // Łączymy i sortujemy wszystkie wiadomości według czasu utworzenia
+      const allEvents = [...sentEvents, ...receivedEvents].sort(
+        (a, b) => a.created_at - b.created_at,
+      );
+
+      // Przekształcamy zdarzenia w wiadomości z odszyfrowaną treścią
+      const messages = await Promise.all(
+        allEvents.map(async (event) => {
+          let decryptedContent;
+          try {
+            // Deszyfrujemy treść w zależności od tego, czy jesteśmy nadawcą czy odbiorcą
+            if (event.pubkey === userPubkey) {
+              // Nadawca - deszyfrujemy używając klucza odbiorcy
+              decryptedContent = await window.nostr.nip04.decrypt(
+                normalizedOtherPubkey,
+                event.content,
+              );
+            } else {
+              // Odbiorca - deszyfrujemy używając klucza nadawcy
+              decryptedContent = await window.nostr.nip04.decrypt(
+                event.pubkey,
+                event.content,
+              );
+            }
+          } catch (error) {
+            console.error("Failed to decrypt message:", error);
+            decryptedContent = "[Failed to decrypt message]";
+          }
+
+          return {
+            id: event.id,
+            content: decryptedContent,
+            sender: event.pubkey,
+            receiver: event.tags.find((tag) => tag[0] === "p")?.[1] || null,
+            createdAt: event.created_at * 1000,
+            read: event.pubkey !== userPubkey, // Wiadomości od nas są zawsze przeczytane
+          };
+        }),
+      );
+
+      return messages;
+    } catch (error) {
+      console.error("Failed to get conversation:", error);
+      throw error;
+    }
+  }
+
+  // Pobieranie listy wszystkich rozmów (unikalnych użytkowników, z którymi mamy wiadomości)
+  async getConversationsList(limit = 20) {
+    if (!this.connected) {
+      throw new Error("Nostr client not connected");
+    }
+
+    if (!window.nostr) {
+      throw new Error("Nostr extension not found");
+    }
+
+    try {
+      const userPubkey = await window.nostr.getPublicKey();
+
+      // Pobieramy wiadomości wysłane przez użytkownika
+      const sentFilter = {
+        kinds: [4],
+        authors: [userPubkey],
+        limit: 200, // Pobieramy więcej żeby mieć szersze spojrzenie na historię
+      };
+
+      // Pobieramy wiadomości otrzymane przez użytkownika
+      const receivedFilter = {
+        kinds: [4],
+        "#p": [userPubkey],
+        limit: 200,
+      };
+
+      // Wykonujemy równolegle zapytania do przekaźników
+      const [sentEvents, receivedEvents] = await Promise.all([
+        this.pool.querySync(this.relays, sentFilter),
+        this.pool.querySync(this.relays, receivedFilter),
+      ]);
+
+      // Wyodrębnij unikalnych użytkowników z wiadomości
+      const conversationsMap = new Map();
+
+      // Przetwarzamy wiadomości wysłane
+      for (const event of sentEvents) {
+        const recipientTag = event.tags.find((tag) => tag[0] === "p");
+        if (recipientTag) {
+          const recipientPubkey = recipientTag[1];
+
+          // Aktualizujemy dane rozmowy tylko jeśli jest to nowsza wiadomość
+          if (
+            !conversationsMap.has(recipientPubkey) ||
+            conversationsMap.get(recipientPubkey).lastMessageAt <
+              event.created_at * 1000
+          ) {
+            let decryptedContent;
+            try {
+              decryptedContent = await window.nostr.nip04.decrypt(
+                recipientPubkey,
+                event.content,
+              );
+            } catch (error) {
+              decryptedContent = "[Failed to decrypt message]";
+            }
+
+            conversationsMap.set(recipientPubkey, {
+              pubkey: recipientPubkey,
+              lastMessage: decryptedContent,
+              lastMessageAt: event.created_at * 1000,
+              unreadCount: 0, // Nasze wiadomości są przeczytane
+            });
+          }
+        }
+      }
+
+      // Przetwarzamy wiadomości otrzymane
+      for (const event of receivedEvents) {
+        const senderPubkey = event.pubkey;
+
+        // Aktualizujemy dane rozmowy tylko jeśli jest to nowsza wiadomość
+        if (
+          !conversationsMap.has(senderPubkey) ||
+          conversationsMap.get(senderPubkey).lastMessageAt <
+            event.created_at * 1000
+        ) {
+          let decryptedContent;
+          try {
+            decryptedContent = await window.nostr.nip04.decrypt(
+              senderPubkey,
+              event.content,
+            );
+          } catch (error) {
+            decryptedContent = "[Failed to decrypt message]";
+          }
+
+          // Sprawdzamy czy to wiadomość nieprzeczytana (tutaj można by dodać logic do śledzenia)
+          // W rzeczywistej aplikacji trzeba by przechowywać stan przeczytanych wiadomości
+
+          conversationsMap.set(senderPubkey, {
+            pubkey: senderPubkey,
+            lastMessage: decryptedContent,
+            lastMessageAt: event.created_at * 1000,
+            unreadCount: 1, // Zakładamy, że nowa wiadomość jest nieprzeczytana
+          });
+        }
+      }
+
+      // Pobieramy profile dla każdego użytkownika
+      const conversations = await Promise.all(
+        Array.from(conversationsMap.entries()).map(async ([pubkey, convo]) => {
+          const profile = await this.getUserProfile(pubkey);
+          return {
+            ...convo,
+            profile,
+          };
+        }),
+      );
+
+      // Sortujemy rozmowy od najnowszej wiadomości i ograniczamy do limitu
+      return conversations
+        .sort((a, b) => b.lastMessageAt - a.lastMessageAt)
+        .slice(0, limit);
+    } catch (error) {
+      console.error("Failed to get conversations list:", error);
+      throw error;
+    }
+  }
+
+  // Oznaczenie wiadomości jako przeczytanych (nie zaimplementowane)
+  async markConversationAsRead(otherUserPubkey) {
+    // W rzeczywistej implementacji, można by tu przechowywać stan przeczytanych wiadomości
+    // np. w lokalStorage lub poprzez specjalne zdarzenia w Nostr
+    console.log(`Marking conversation with ${otherUserPubkey} as read`);
+    return true;
+  }
+
+  // /NIP-04
 
   // Prywatna metoda do pobierania odpowiedzi na komentarz
   async _getReplies(commentId) {

@@ -213,6 +213,16 @@ function Sidebar({ nostrClient, currentUser }) {
                 {t("feeds.downvoted")}
               </Link>
             </li>
+            <li>
+              <Link
+                to="/messages"
+                className={
+                  location.pathname.startsWith("/messages") ? "active" : ""
+                }
+              >
+                ✉️ {t("feeds.messages")}
+              </Link>
+            </li>
           </ul>
 
           {activeFeed && (

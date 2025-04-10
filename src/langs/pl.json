@@ -46,6 +46,7 @@
       "savedPosts": "Zapisane posty",
       "upvoted": "Wykopane",
       "downvoted": "Zakopane",
+      "messages": "Wiadomości",
       "sort": "Sortuj:",
       "sortTag": "Sortuj tag:",
       "tagHeading": "Tag: #{tag}",
@@ -133,7 +134,9 @@
       "loadingProfile": "Ładowanie profilu użytkownika...",
       "profileNotFound": "Profil nie został znaleziony",
       "loginToFollow": "Musisz być zalogowany, aby obserwować użytkowników!",
-      "loginToVote": "Musisz być zalogowany, aby głosować!"
+      "loginToVote": "Musisz być zalogowany, aby głosować!",
+      "loginToMessage": "Musisz być zalogowany, aby wysyłać wiadomości!",
+      "sendMessage": "Wiadomość"
     },
     "comment": {
       "reply": "Odpowiedz",
@@ -180,6 +183,31 @@
       "loginButton": "Zaloguj",
       "noNostrAccount": "Nie masz jeszcze konta Nostr? Możesz utworzyć klucze przy użyciu różnych narzędzi, np.:",
       "nos2xForFirefox": "nos2x for Firefox"
+    },
+    "messages": {
+      "directMessages": "Wiadomości bezpośrednie",
+      "newMessage": "Nowa wiadomość",
+      "recipient": "Odbiorca",
+      "message": "Wiadomość",
+      "send": "Wyślij",
+      "selectConversation": "Wybierz rozmowę z listy lub rozpocznij nową",
+      "noMessagesYet": "Brak wiadomości",
+      "startConversation": "Rozpocznij rozmowę wysyłając wiadomość",
+      "typeMessage": "Wpisz swoją wiadomość...",
+      "loadingConversations": "Ładowanie rozmów...",
+      "noConversations": "Nie masz jeszcze żadnych rozmów",
+      "viewProfile": "Zobacz profil",
+      "enterPubkeyOrNpub": "Wprowadź pubkey lub npub",
+      "check": "Sprawdź",
+      "checking": "Sprawdzanie...",
+      "writeYourMessage": "Napisz swoją wiadomość tutaj...",
+      "invalidPubkeyFormat": "Nieprawidłowy format klucza publicznego. Użyj formatu npub lub hex.",
+      "failedToCheckPubkey": "Nie udało się sprawdzić klucza odbiorcy",
+      "failedToFetchConversations": "Nie udało się pobrać rozmów",
+      "failedToFetchConversation": "Nie udało się pobrać rozmowy",
+      "failedToSendMessage": "Nie udało się wysłać wiadomości",
+      "failedToStartConversation": "Nie udało się rozpocząć rozmowy",
+      "loginToAccessMessages": "Zaloguj się, aby uzyskać dostęp do swoich wiadomości"
     }
   }
 }
