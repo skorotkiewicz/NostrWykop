@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import useTranslate from "../utils/useTranslate";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 function Sidebar({ nostrClient, currentUser }) {
   const { t } = useTranslate();
@@ -310,6 +311,8 @@ function Sidebar({ nostrClient, currentUser }) {
           </div>
         )}
       </div>
+
+      <LanguageSwitcher />
 
       <div className="sidebar-footer">
         <div className="about-section">
