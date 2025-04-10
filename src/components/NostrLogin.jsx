@@ -141,6 +141,15 @@ function NostrLogin({ onLogin, onClose }) {
                 Iris
               </a>
             </li>
+            <li>
+              <a
+                href="https://github.com/diegogurpegui/nos2x-fox"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                nos2x for Firefox
+              </a>
+            </li>
           </ul>
         </div>
       </div>
