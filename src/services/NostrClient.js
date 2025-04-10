@@ -60,7 +60,7 @@ class NostrClient {
       }
 
       // Pobieramy zdarzenia z przekaźników
-      const events = await this.pool.list(this.relays, [filter]);
+      const events = await this.pool.querySync(this.relays, filter);
 
       // Przekształcamy zdarzenia Nostr w format postów dla naszej aplikacji
       const posts = await Promise.all(
@@ -124,7 +124,7 @@ class NostrClient {
         kinds: [1, 30023],
       };
 
-      const events = await this.pool.list(this.relays, [filter]);
+      const events = await this.pool.querySync(this.relays, filter);
 
       if (events.length === 0) {
         return null;
@@ -191,7 +191,7 @@ class NostrClient {
         kinds: [0],
       };
 
-      const events = await this.pool.list(this.relays, [filter]);
+      const events = await this.pool.querySync(this.relays, filter);
 
       if (events.length === 0) {
         // Jeśli nie ma metadanych, zwracamy podstawowy profil
@@ -257,7 +257,7 @@ class NostrClient {
         limit: 50,
       };
 
-      const events = await this.pool.list(this.relays, [filter]);
+      const events = await this.pool.querySync(this.relays, filter);
 
       // Pobieramy informacje o autorze
       const authorProfile = await this.getUserProfile(normalizedPubkey);
@@ -320,7 +320,7 @@ class NostrClient {
         limit: 100,
       };
 
-      const events = await this.pool.list(this.relays, [filter]);
+      const events = await this.pool.querySync(this.relays, filter);
 
       // Przekształcamy zdarzenia w komentarze
       const comments = await Promise.all(
@@ -495,12 +495,10 @@ class NostrClient {
 
       // Pobieramy bieżącą listę obserwowanych użytkowników
       const userPubkey = await window.nostr.getPublicKey();
-      const followListEvents = await this.pool.list(this.relays, [
-        {
-          authors: [userPubkey],
-          kinds: [3],
-        },
-      ]);
+      const followListEvents = await this.pool.querySync(this.relays, {
+        authors: [userPubkey],
+        kinds: [3],
+      });
 
       // Sortujemy wydarzenia według czasu utworzenia (od najnowszego)
       followListEvents.sort((a, b) => b.created_at - a.created_at);
@@ -567,12 +565,10 @@ class NostrClient {
 
       // Pobieramy bieżącą listę obserwowanych użytkowników
       const userPubkey = await window.nostr.getPublicKey();
-      const followListEvents = await this.pool.list(this.relays, [
-        {
-          authors: [userPubkey],
-          kinds: [3],
-        },
-      ]);
+      const followListEvents = await this.pool.querySync(this.relays, {
+        authors: [userPubkey],
+        kinds: [3],
+      });
 
       // Sortujemy wydarzenia według czasu utworzenia (od najnowszego)
       followListEvents.sort((a, b) => b.created_at - a.created_at);
@@ -646,12 +642,10 @@ class NostrClient {
       }
 
       // Pobieramy bieżącą listę obserwowanych użytkowników
-      const followListEvents = await this.pool.list(this.relays, [
-        {
-          authors: [normalizedUserPubkey],
-          kinds: [3],
-        },
-      ]);
+      const followListEvents = await this.pool.querySync(this.relays, {
+        authors: [normalizedUserPubkey],
+        kinds: [3],
+      });
 
       // Sortujemy wydarzenia według czasu utworzenia (od najnowszego)
       followListEvents.sort((a, b) => b.created_at - a.created_at);
