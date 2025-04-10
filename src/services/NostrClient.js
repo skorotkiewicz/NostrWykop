@@ -89,6 +89,12 @@ class NostrClient {
             .filter((tag) => tag[0] === "t")
             .map((tag) => tag[1]);
 
+          // Pobieramy liczbę głosów
+          const votes = await this._getVotesCount(event.id);
+
+          // Pobieramy liczbę komentarzy
+          const commentsCount = await this._getCommentsCount(event.id);
+
           // Tworzymy obiekt posta
           return {
             id: event.id,
@@ -98,8 +104,8 @@ class NostrClient {
             createdAt: event.created_at * 1000,
             author: authorProfile,
             tags: postTags,
-            votes: Math.floor(Math.random() * 100), // Przykładowe głosy (do zaimplementowania później)
-            commentsCount: Math.floor(Math.random() * 20), // Przykładowa liczba komentarzy
+            votes,
+            commentsCount,
             image: this._extractImageUrl(event.content),
           };
         }),
@@ -151,6 +157,12 @@ class NostrClient {
         .filter((tag) => tag[0] === "t")
         .map((tag) => tag[1]);
 
+      // Pobieramy liczbę głosów
+      const votes = await this._getVotesCount(id);
+
+      // Pobieramy liczbę komentarzy
+      const commentsCount = await this._getCommentsCount(id);
+
       // Tworzymy obiekt posta
       return {
         id: event.id,
@@ -159,7 +171,8 @@ class NostrClient {
         createdAt: event.created_at * 1000,
         author: authorProfile,
         tags: postTags,
-        votes: Math.floor(Math.random() * 100), // Przykładowe głosy (do zaimplementowania później)
+        votes,
+        commentsCount,
         image: this._extractImageUrl(event.content),
       };
     } catch (error) {
@@ -263,41 +276,49 @@ class NostrClient {
       const authorProfile = await this.getUserProfile(normalizedPubkey);
 
       // Przekształcamy zdarzenia w posty
-      const posts = events.map((event) => {
-        // Próbujemy wyodrębnić tytuł i treść
-        let title = "";
-        let content = event.content;
-        let summary = "";
+      const posts = await Promise.all(
+        events.map(async (event) => {
+          // Próbujemy wyodrębnić tytuł i treść
+          let title = "";
+          let content = event.content;
+          let summary = "";
 
-        // Sprawdzamy, czy treść zawiera tytuł (np. pierwsza linia zakończona \n\n)
-        const titleMatch = event.content.match(/^(.+?)\n\n/);
-        if (titleMatch) {
-          title = titleMatch[1];
-          content = event.content.substring(titleMatch[0].length);
-        }
+          // Sprawdzamy, czy treść zawiera tytuł (np. pierwsza linia zakończona \n\n)
+          const titleMatch = event.content.match(/^(.+?)\n\n/);
+          if (titleMatch) {
+            title = titleMatch[1];
+            content = event.content.substring(titleMatch[0].length);
+          }
 
-        // Tworzymy krótkie podsumowanie treści
-        summary =
-          content.substring(0, 150) + (content.length > 150 ? "..." : "");
+          // Tworzymy krótkie podsumowanie treści
+          summary =
+            content.substring(0, 150) + (content.length > 150 ? "..." : "");
 
-        // Wyodrębniamy tagi
-        const postTags = event.tags
-          .filter((tag) => tag[0] === "t")
-          .map((tag) => tag[1]);
+          // Wyodrębniamy tagi
+          const postTags = event.tags
+            .filter((tag) => tag[0] === "t")
+            .map((tag) => tag[1]);
 
-        return {
-          id: event.id,
-          title: title || "Bez tytułu",
-          content,
-          summary,
-          createdAt: event.created_at * 1000,
-          author: authorProfile,
-          tags: postTags,
-          votes: Math.floor(Math.random() * 100), // Przykładowe głosy
-          commentsCount: Math.floor(Math.random() * 20), // Przykładowa liczba komentarzy
-          image: this._extractImageUrl(event.content),
-        };
-      });
+          // Pobieramy liczbę głosów
+          const votes = await this._getVotesCount(event.id);
+
+          // Pobieramy liczbę komentarzy
+          const commentsCount = await this._getCommentsCount(event.id);
+
+          return {
+            id: event.id,
+            title: title || "Bez tytułu",
+            content,
+            summary,
+            createdAt: event.created_at * 1000,
+            author: authorProfile,
+            tags: postTags,
+            votes,
+            commentsCount,
+            image: this._extractImageUrl(event.content),
+          };
+        }),
+      );
 
       // Sortujemy posty według czasu utworzenia (od najnowszego)
       return posts.sort((a, b) => b.createdAt - a.createdAt);
@@ -328,13 +349,19 @@ class NostrClient {
           // Pobieramy informacje o autorze
           const authorProfile = await this.getUserProfile(event.pubkey);
 
+          // Pobieramy liczbę głosów dla komentarza
+          const votes = await this._getVotesCount(event.id);
+
+          // Pobieramy odpowiedzi na ten komentarz
+          const replies = await this._getReplies(event.id);
+
           return {
             id: event.id,
             content: event.content,
             createdAt: event.created_at * 1000,
             author: authorProfile,
-            votes: Math.floor(Math.random() * 20), // Przykładowe głosy
-            replies: [], // Później zaimplementujemy zagnieżdżone odpowiedzi
+            votes,
+            replies,
           };
         }),
       );
@@ -662,6 +689,92 @@ class NostrClient {
     } catch (error) {
       console.error("Failed to check if following:", error);
       throw error;
+    }
+  }
+
+  // Prywatna metoda do pobierania liczby głosów dla danego posta/komentarza
+  async _getVotesCount(eventId) {
+    try {
+      // Szukamy reakcji (kind 7) dla danego eventu
+      const filter = {
+        kinds: [7],
+        "#e": [eventId],
+      };
+
+      const events = await this.pool.querySync(this.relays, filter);
+
+      // Zliczamy głosy dodatnie (+) i ujemne (-)
+      let upvotes = 0;
+      let downvotes = 0;
+
+      for (const event of events) {
+        if (event.content === "+") {
+          upvotes++;
+        } else if (event.content === "-") {
+          downvotes++;
+        }
+      }
+
+      // Zwracamy różnicę (całkowitą ocenę)
+      return upvotes - downvotes;
+    } catch (error) {
+      console.error("Failed to get votes count:", error);
+      return 0;
+    }
+  }
+
+  // Prywatna metoda do pobierania liczby komentarzy dla danego posta
+  async _getCommentsCount(eventId) {
+    try {
+      // Szukamy komentarzy (kind 1) dla danego eventu
+      const filter = {
+        kinds: [1],
+        "#e": [eventId],
+      };
+
+      const events = await this.pool.querySync(this.relays, filter);
+      return events.length;
+    } catch (error) {
+      console.error("Failed to get comments count:", error);
+      return 0;
+    }
+  }
+
+  // Prywatna metoda do pobierania odpowiedzi na komentarz
+  async _getReplies(commentId) {
+    try {
+      // Szukamy odpowiedzi (kind 1) dla danego komentarza
+      const filter = {
+        kinds: [1],
+        "#e": [commentId],
+      };
+
+      const events = await this.pool.querySync(this.relays, filter);
+
+      // Przekształcamy zdarzenia w odpowiedzi
+      const replies = await Promise.all(
+        events.map(async (event) => {
+          // Pobieramy informacje o autorze
+          const authorProfile = await this.getUserProfile(event.pubkey);
+
+          // Pobieramy liczbę głosów dla odpowiedzi
+          const votes = await this._getVotesCount(event.id);
+
+          return {
+            id: event.id,
+            content: event.content,
+            createdAt: event.created_at * 1000,
+            author: authorProfile,
+            votes,
+          };
+        }),
+      );
+
+      // Sortujemy odpowiedzi według czasu utworzenia (od najnowszego)
+      return replies.sort((a, b) => b.createdAt - a.createdAt);
+    } catch (error) {
+      console.error("Failed to get replies:", error);
+      return [];
     }
   }
 
