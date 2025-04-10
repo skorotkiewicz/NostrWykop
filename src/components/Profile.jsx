@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import Post from "./Post";
 import Comment from "./Comment";
+import UserList from "./UserList";
 
 function Profile({ nostrClient, currentUser }) {
   const { pubkey } = useParams();
@@ -12,6 +13,9 @@ function Profile({ nostrClient, currentUser }) {
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("posts");
   const [isFollowing, setIsFollowing] = useState(false);
+  const [followers, setFollowers] = useState([]);
+  const [following, setFollowing] = useState([]);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(false);
   const [profileStats, setProfileStats] = useState({
     postsCount: 0,
     followersCount: 0,
@@ -238,6 +242,38 @@ function Profile({ nostrClient, currentUser }) {
     }
   };
 
+  const handleShowFollowers = async () => {
+    setIsLoadingUsers(true);
+    setActiveTab("followers");
+    try {
+      if (followers.length === 0) {
+        const followersProfiles =
+          await nostrClient.getFollowersProfiles(pubkey);
+        setFollowers(followersProfiles);
+      }
+    } catch (error) {
+      console.error("Failed to fetch followers:", error);
+    } finally {
+      setIsLoadingUsers(false);
+    }
+  };
+
+  const handleShowFollowing = async () => {
+    setIsLoadingUsers(true);
+    setActiveTab("following");
+    try {
+      if (following.length === 0) {
+        const followingProfiles =
+          await nostrClient.getFollowingProfiles(pubkey);
+        setFollowing(followingProfiles);
+      }
+    } catch (error) {
+      console.error("Failed to fetch following:", error);
+    } finally {
+      setIsLoadingUsers(false);
+    }
+  };
+
   const handleFollow = async () => {
     if (!currentUser) {
       alert("Musisz być zalogowany, aby obserwować użytkowników!");
@@ -349,11 +385,19 @@ function Profile({ nostrClient, currentUser }) {
               <span className="stat-value">{profileStats.postsCount}</span>
               <span className="stat-label">Posty</span>
             </div>
-            <div className="stat">
+            {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
+            <div
+              className="stat clickable"
+              onClick={() => handleShowFollowers()}
+            >
               <span className="stat-value">{profileStats.followersCount}</span>
               <span className="stat-label">Obserwujący</span>
             </div>
-            <div className="stat">
+            {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
+            <div
+              className="stat clickable"
+              onClick={() => handleShowFollowing()}
+            >
               <span className="stat-value">{profileStats.followingCount}</span>
               <span className="stat-label">Obserwuje</span>
             </div>
@@ -393,6 +437,16 @@ function Profile({ nostrClient, currentUser }) {
         >
           Zakopane/Wykopane ({userVotes.length})
         </button>
+        {activeTab === "followers" && (
+          <button type="button" className="tab active">
+            Obserwujący ({followers.length})
+          </button>
+        )}
+        {activeTab === "following" && (
+          <button type="button" className="tab active">
+            Obserwuje ({following.length})
+          </button>
+        )}
       </div>
 
       <div className="profile-content">
@@ -476,6 +530,22 @@ function Profile({ nostrClient, currentUser }) {
               </div>
             )}
           </div>
+        )}
+
+        {activeTab === "followers" && (
+          <UserList
+            users={followers}
+            isLoading={isLoadingUsers}
+            title="Osoby obserwujące"
+          />
+        )}
+
+        {activeTab === "following" && (
+          <UserList
+            users={following}
+            isLoading={isLoadingUsers}
+            title="Osoby obserwowane"
+          />
         )}
       </div>
     </div>

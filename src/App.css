@@ -708,6 +708,17 @@ textarea:focus {
   align-items: center;
 }
 
+.stat.clickable {
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.stat.clickable:hover {
+  background-color: var(--gray-lighter);
+}
+
 .stat-value {
   font-size: 18px;
   font-weight: bold;
@@ -1010,6 +1021,77 @@ textarea:focus {
 .social-links a {
   font-size: 12px;
   color: var(--link-color);
+}
+
+/* User List */
+.user-list {
+  margin-bottom: 20px;
+}
+
+.user-list h2 {
+  margin-bottom: 20px;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--secondary-color);
+}
+
+.users-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.user-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--bg-color);
+  padding: 15px;
+  border-radius: 8px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-decoration: none;
+  color: var(--text-color);
+}
+
+.user-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.user-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 10px;
+  background-color: var(--gray-lighter);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--gray-light);
+}
+
+.user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-info {
+  text-align: center;
+}
+
+.user-name {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.user-nip05 {
+  font-size: 12px;
+  color: var(--gray-light);
 }
 
 /* Dodatkowe style dla Popular Tags */
