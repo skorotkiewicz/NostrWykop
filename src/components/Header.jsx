@@ -1,11 +1,20 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import NostrLogin from "./NostrLogin";
 import AddPostModal from "./AddPostModal";
 
 function Header({ currentUser, onLogin, onLogout, nostrClient }) {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showAddPostModal, setShowAddPostModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
+  
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
 
   return (
     <header className="header">
@@ -13,10 +22,15 @@ function Header({ currentUser, onLogin, onLogout, nostrClient }) {
         <Link to="/" className="logo">
           NostrWykop
         </Link>
-        <div className="search-bar">
-          <input type="text" placeholder="Szukaj..." />
+        <form className="search-bar" onSubmit={handleSearch}>
+          <input 
+            type="text" 
+            placeholder="Szukaj..." 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
           <button type="submit">🔍</button>
-        </div>
+        </form>
       </div>
       <div className="header-right">
         {currentUser ? (

@@ -5,6 +5,7 @@ import Sidebar from "./components/Sidebar";
 import MainFeed from "./components/MainFeed";
 import PostDetail from "./components/PostDetail";
 import Profile from "./components/Profile";
+import Search from "./components/Search";
 import NostrClient from "./services/NostrClient";
 import "./App.css";
 
@@ -108,6 +109,15 @@ function App() {
                   nostrClient={nostrClient}
                   currentUser={currentUser}
                   feedType="tag"
+                />
+              }
+            />
+            <Route
+              path="/search"
+              element={
+                <Search
+                  nostrClient={nostrClient}
+                  currentUser={currentUser}
                 />
               }
             />

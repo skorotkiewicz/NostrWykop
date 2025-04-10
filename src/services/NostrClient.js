@@ -1015,6 +1015,103 @@ class NostrClient {
 
     return null;
   }
+
+  // Metoda do wyszukiwania postów zawierających określoną frazę
+  async searchPosts(query, options = {}) {
+    if (!this.connected) {
+      throw new Error("Nostr client not connected");
+    }
+
+    const { limit = 30, since, until, sort = "newest" } = options;
+
+    try {
+      // Pobieramy większą liczbę postów, aby mieć co przeszukiwać
+      const filter = {
+        kinds: [1, 30023],
+        limit: 500, // Większy limit, aby zwiększyć szansę znalezienia wyników
+      };
+
+      if (since) {
+        filter.since = Math.floor(since / 1000);
+      }
+
+      if (until) {
+        filter.until = Math.floor(until / 1000);
+      }
+
+      // Pobieramy zdarzenia z przekaźników
+      const events = await this.pool.querySync(this.relays, filter);
+
+      // Tworzymy regex do wyszukiwania (ignorujący wielkość liter)
+      const searchRegex = new RegExp(query, 'i');
+
+      // Filtrujemy zdarzenia, które zawierają szukaną frazę
+      const matchingEvents = events.filter(event => 
+        searchRegex.test(event.content) || 
+        event.tags.some(tag => tag[0] === 't' && searchRegex.test(tag[1]))
+      );
+
+      // Ograniczamy liczbę wyników
+      const limitedEvents = matchingEvents.slice(0, limit);
+
+      // Przekształcamy zdarzenia w posty
+      const posts = await Promise.all(
+        limitedEvents.map(async (event) => {
+          // Próbujemy wyodrębnić tytuł i treść
+          let title = "";
+          let content = event.content;
+          let summary = "";
+
+          // Sprawdzamy, czy treść zawiera tytuł (np. pierwsza linia zakończona \n\n)
+          const titleMatch = event.content.match(/^(.+?)\n\n/);
+          if (titleMatch) {
+            title = titleMatch[1];
+            content = event.content.substring(titleMatch[0].length);
+          }
+
+          // Tworzymy krótkie podsumowanie treści
+          summary = content.substring(0, 150) + (content.length > 150 ? "..." : "");
+
+          // Pobieramy informacje o autorze
+          const authorProfile = await this.getUserProfile(event.pubkey);
+
+          // Wyodrębniamy tagi
+          const postTags = event.tags
+            .filter((tag) => tag[0] === "t")
+            .map((tag) => tag[1]);
+
+          // Pobieramy liczbę głosów
+          const votes = await this._getVotesCount(event.id);
+
+          // Pobieramy liczbę komentarzy
+          const commentsCount = await this._getCommentsCount(event.id);
+
+          // Tworzymy obiekt posta
+          return {
+            id: event.id,
+            title: title || "Bez tytułu",
+            content,
+            summary,
+            createdAt: event.created_at * 1000,
+            author: authorProfile,
+            tags: postTags,
+            votes,
+            commentsCount,
+            image: this._extractImageUrl(content),
+            // Podświetlamy, dlaczego post został znaleziony
+            matchReason: searchRegex.test(title) ? 'title' : 
+                        searchRegex.test(content) ? 'content' : 'tags'
+          };
+        })
+      );
+
+      // Sortujemy posty
+      return this._sortPosts(posts, sort);
+    } catch (error) {
+      console.error("Failed to search posts:", error);
+      throw error;
+    }
+  }
 }
 
 export default NostrClient;
