@@ -170,6 +170,14 @@ function Sidebar({ nostrClient, currentUser }) {
               {t("feeds.latest")}
             </button>
           </li>
+          <li>
+            <Link
+              to="/messages"
+              className={`nav-link ${location.pathname.startsWith("/messages") ? "active" : ""}`}
+            >
+              {t("feeds.messages")}
+            </Link>
+          </li>
         </ul>
       </nav>
 
@@ -211,16 +219,6 @@ function Sidebar({ nostrClient, currentUser }) {
                 onClick={() => setActiveFeed("downvoted")}
               >
                 {t("feeds.downvoted")}
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/messages"
-                className={
-                  location.pathname.startsWith("/messages") ? "active" : ""
-                }
-              >
-                ✉️ {t("feeds.messages")}
               </Link>
             </li>
           </ul>
