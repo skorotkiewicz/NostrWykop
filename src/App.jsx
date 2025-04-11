@@ -47,18 +47,15 @@ function App() {
     if (!nostrClient) return;
 
     try {
-      if (keypair.sk === "nip07") {
-        const userProfile = await nostrClient.getUserProfile(keypair.pk);
-        setCurrentUser(userProfile);
-        localStorage.setItem(
-          "keypair",
-          JSON.stringify({ pk: keypair.pk, sk: "nip07" }),
-        );
-      } else {
-        const userProfile = await nostrClient.getUserProfile(keypair.pk);
-        setCurrentUser(userProfile);
-        localStorage.setItem("keypair", JSON.stringify(keypair));
-      }
+      const userProfile = await nostrClient.getUserProfile(keypair.pk);
+      setCurrentUser(userProfile);
+
+      return keypair.sk === "nip07"
+        ? localStorage.setItem(
+            "keypair",
+            JSON.stringify({ pk: keypair.pk, sk: "nip07" }),
+          )
+        : localStorage.setItem("keypair", JSON.stringify(keypair));
     } catch (error) {
       console.error(error);
     }
