@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import useTranslate from "../utils/useTranslate";
 import { nip19 } from "nostr-tools";
 import "../styles/NostrLogin.css";
 
 function NostrLogin({ onLogin, onClose }) {
   const { t } = useTranslate();
-  const [pubkey, setPubkey] = useState("");
+  const [manualKey, setManualKey] = useState("");
   const [mode, setMode] = useState("login"); // 'login' lub 'register'
   const [loginMethod, setLoginMethod] = useState("extension"); // 'extension' lub 'manual'
   const [isLoading, setIsLoading] = useState(false);
@@ -33,7 +33,7 @@ function NostrLogin({ onLogin, onClose }) {
       // Pobierz klucz publiczny z rozszerzenia
       const userPubkey = await window.nostr.getPublicKey();
       if (userPubkey) {
-        onLogin(userPubkey);
+        onLogin({ pk: userPubkey, sk: "nip07" });
         onClose();
       }
     } catch (error) {
@@ -46,32 +46,32 @@ function NostrLogin({ onLogin, onClose }) {
 
   const handleManualLogin = async (e) => {
     e.preventDefault();
-    if (!pubkey.trim()) return;
+    if (!manualKey.trim()) return;
 
     try {
       const { getPublicKey } = await import("nostr-tools");
 
       // Sprawdzamy czy to klucz publiczny (npub) czy prywatny (nsec lub hex)
-      if (/^[0-9a-f]{64}$/.test(pubkey)) {
+      if (/^[0-9a-f]{64}$/.test(manualKey)) {
         try {
-          const derivedPublicKey = getPublicKey(pubkey);
-          onLogin(derivedPublicKey);
+          const derivedPublicKey = getPublicKey(manualKey);
+          onLogin({ pk: derivedPublicKey, sk: manualKey });
           onClose();
         } catch (error) {
           console.log(error);
         }
-      } else if (pubkey.startsWith("npub")) {
+      } else if (manualKey.startsWith("npub")) {
         // Logowanie kluczem publicznym
-        onLogin(pubkey);
+        onLogin({ pk: derivedPublicKey, sk: null });
         onClose();
-      } else if (pubkey.startsWith("nsec")) {
+      } else if (manualKey.startsWith("nsec")) {
         // Logowanie kluczem prywatnym nsec
         try {
-          const { data: privateKey } = nip19.decode(pubkey);
+          const { data: privateKey } = nip19.decode(manualKey);
           const derivedPublicKey = getPublicKey(privateKey);
 
           // Logujemy się za pomocą wygenerowanego klucza publicznego
-          onLogin(derivedPublicKey);
+          onLogin({ pk: derivedPublicKey, sk: manualKey });
 
           // Ostrzegamy użytkownika, że powinien używać klucza bezpiecznie
           showNotification(t("login.privateKeyWarning"), "warning");
@@ -114,7 +114,7 @@ function NostrLogin({ onLogin, onClose }) {
       });
 
       // Logujemy użytkownika używając nowego klucza publicznego
-      onLogin(publicKey);
+      onLogin({ pk: publicKey, sk: privateKey });
     } catch (error) {
       console.error("Failed to register:", error);
       showNotification(t("register.registrationError"), "error");
@@ -243,8 +243,8 @@ function NostrLogin({ onLogin, onClose }) {
                 <form onSubmit={handleManualLogin}>
                   <input
                     type="text"
-                    value={pubkey}
-                    onChange={(e) => setPubkey(e.target.value)}
+                    value={manualKey}
+                    onChange={(e) => setManualKey(e.target.value)}
                     placeholder={t("login.keyPlaceholder")}
                     required
                   />

@@ -26,10 +26,10 @@ function App() {
         setNostrClient(client);
 
         // Sprawdź, czy użytkownik jest zalogowany
-        const userPubKey = localStorage.getItem("nostrPubKey");
-        if (userPubKey) {
+        const userPubKey = JSON.parse(localStorage.getItem("keypair") || {});
+        if (userPubKey.pk) {
           // Pobierz profil użytkownika z Nostr
-          const userProfile = await client.getUserProfile(userPubKey);
+          const userProfile = await client.getUserProfile(userPubKey.pk);
           setCurrentUser(userProfile);
         }
       } catch (error) {
@@ -42,20 +42,35 @@ function App() {
     initNostr();
   }, []);
 
-  const handleLogin = async (pubkey) => {
-    if (!nostrClient) return;
+  const handleLogin = async (keypair) => {
     try {
-      const userProfile = await nostrClient.getUserProfile(pubkey);
-      setCurrentUser(userProfile);
-      localStorage.setItem("nostrPubKey", pubkey);
-    } catch (error) {
-      console.error("Login failed:", error);
-    }
+      if (keypair.sk === "nip07") {
+        const userProfile = await nostrClient.getUserProfile(keypair.pk);
+        setCurrentUser(userProfile);
+        localStorage.setItem(
+          "keypair",
+          JSON.stringify({ pk: keypair.pk, sk: "nip07" }),
+        );
+      } else {
+        const userProfile = await nostrClient.getUserProfile(keypair.pk);
+        setCurrentUser(userProfile);
+        localStorage.setItem("keypair", JSON.stringify(keypair));
+      }
+    } catch (error) {}
+
+    // if (!nostrClient) return;
+    // try {
+    //   const userProfile = await nostrClient.getUserProfile(pubkey);
+    //   setCurrentUser(userProfile);
+    //   localStorage.setItem("keypair", pubkey);
+    // } catch (error) {
+    //   console.error("Login failed:", error);
+    // }
   };
 
   const handleLogout = () => {
     setCurrentUser(null);
-    localStorage.removeItem("nostrPubKey");
+    localStorage.removeItem("keypair");
   };
 
   if (isLoading) {
