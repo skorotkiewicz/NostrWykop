@@ -207,6 +207,7 @@
       "recipient": "Odbiorca",
       "message": "Wiadomość",
       "send": "Wyślij",
+      "delete": "Usuń",
       "selectConversation": "Wybierz rozmowę z listy lub rozpocznij nową",
       "noMessagesYet": "Brak wiadomości",
       "startConversation": "Rozpocznij rozmowę wysyłając wiadomość",
@@ -223,6 +224,7 @@
       "failedToFetchConversations": "Nie udało się pobrać rozmów",
       "failedToFetchConversation": "Nie udało się pobrać rozmowy",
       "failedToSendMessage": "Nie udało się wysłać wiadomości",
+      "failedToDeleteMessage": "Nie udało się usunąć wiadomości",
       "failedToStartConversation": "Nie udało się rozpocząć rozmowy",
       "loginToAccessMessages": "Zaloguj się, aby uzyskać dostęp do swoich wiadomości"
     }

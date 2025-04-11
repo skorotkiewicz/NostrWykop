@@ -9,6 +9,7 @@ function ConversationView({
   messages,
   currentUser,
   onSendMessage,
+  onDeleteMessage,
 }) {
   const { t } = useTranslate();
   const [newMessage, setNewMessage] = useState("");
@@ -82,14 +83,26 @@ function ConversationView({
         ) : (
           <>
             <div className="messages-list">
-              {messages.map((message) => (
+              {messages.map((message, key) => (
                 <div
-                  key={message.id}
+                  key={`${message.id}-${key}`}
                   className={`message ${
                     message.sender === currentUser.pubkey ? "sent" : "received"
                   }`}
                 >
-                  <div className="message-content">{message.content}</div>
+                  <div className="message-content">
+                    {message.content}
+                    {message.sender === currentUser.pubkey && (
+                      <button
+                        type="button"
+                        className="delete-message-button"
+                        onClick={() => onDeleteMessage(message.id)}
+                        title={t("messages.delete")}
+                      >
+                        ×
+                      </button>
+                    )}
+                  </div>
                   <div className="message-time">
                     {formatMessageTime(message.createdAt)}
                   </div>

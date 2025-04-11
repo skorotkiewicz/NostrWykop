@@ -100,6 +100,28 @@ function Messages({ nostrClient, currentUser }) {
     }
   };
 
+  // Obsługa usuwania wiadomości
+  const handleDeleteMessage = async (messageId) => {
+    if (!nostrClient || !currentUser || !selectedConversation) return;
+
+    try {
+      // Usuwamy wiadomość
+      await nostrClient.deleteMessage(messageId);
+
+      // Usuwamy wiadomość z listy
+      setMessages((prevMessages) => 
+        prevMessages.filter((message) => message.id !== messageId)
+      );
+
+      // Odświeżamy listę konwersacji
+      const updatedConversations = await nostrClient.getConversationsList();
+      setConversations(updatedConversations);
+    } catch (err) {
+      console.error("Failed to delete message:", err);
+      setError(t("messages.failedToDeleteMessage"));
+    }
+  };
+
   // Obsługa rozpoczęcia nowej konwersacji
   const handleStartNewConversation = (recipientPubkey, initialMessage) => {
     if (!nostrClient || !currentUser) return;
@@ -163,6 +185,7 @@ function Messages({ nostrClient, currentUser }) {
               messages={messages}
               currentUser={currentUser}
               onSendMessage={handleSendMessage}
+              onDeleteMessage={handleDeleteMessage}
             />
           ) : (
             <div className="no-conversation-selected">

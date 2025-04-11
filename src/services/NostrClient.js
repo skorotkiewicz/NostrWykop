@@ -11,17 +11,19 @@ class NostrClient {
       // "wss://relay.snort.social",
     ];
     this.pool = null;
-    this.connected = false;
     this.nip04 = null;
+    this.sign = null;
+    this.connected = false;
   }
 
   async init() {
     try {
       // Dynamiczne importowanie nostr-tools aby uniknąć problemów z SSR
-      const { SimplePool, nip04 } = await import("nostr-tools");
+      const { SimplePool, nip04, finalizeEvent } = await import("nostr-tools");
 
       this.pool = new SimplePool();
       this.nip04 = nip04;
+      this.sign = finalizeEvent;
       this.connected = true;
 
       // Łączenie z przekaźnikami
@@ -1026,6 +1028,43 @@ class NostrClient {
   }
 
   // Metody do obsługi bezpośrednich wiadomości (NIP-04)
+
+  // Usuwanie wiadomości (poprzez jej zastąpienie)
+  async deleteMessage(messageId) {
+    if (!this.connected) {
+      throw new Error("Nostr client not connected");
+    }
+
+    if (!window.nostr) {
+      throw new Error("Nostr extension not found");
+    }
+
+    try {
+      // Pobieramy klucz publiczny użytkownika
+      const userPubkey = await window.nostr.getPublicKey();
+
+      // Tworzymy zdarzenie kind 5 (usunięcie zdarzenia)
+      const event = {
+        kind: 5,
+        pubkey: userPubkey,
+        tags: [["e", messageId]],
+        content: "This message has been deleted",
+        created_at: Math.floor(Date.now() / 1000),
+      };
+
+      // Podpisujemy zdarzenie
+      const signedEvent = await window.nostr.signEvent(event);
+
+      // Publikujemy zdarzenie do przekaźników
+      const pubs = this.pool.publish(this.relays, signedEvent);
+      await Promise.all(pubs);
+
+      return true;
+    } catch (error) {
+      console.error("Failed to delete message:", error);
+      throw error;
+    }
+  }
 
   // Wysyłanie zaszyfrowanej wiadomości do użytkownika
   async sendDirectMessage(recipientPubkey, content) {

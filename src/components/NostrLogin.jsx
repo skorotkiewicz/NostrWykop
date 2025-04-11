@@ -105,9 +105,6 @@ function NostrLogin({ onLogin, onClose }) {
       const npub = nip19.npubEncode(publicKey);
       const nsec = nip19.nsecEncode(privateKey);
 
-      console.log(npub);
-      console.log(nsec);
-
       // Zapisujemy nsec do wyświetlenia w komponencie
       setNotification({
         message: t("register.savePrivateKey", { nsec: nsec }),

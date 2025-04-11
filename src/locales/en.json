@@ -207,6 +207,7 @@
       "recipient": "Recipient",
       "message": "Message",
       "send": "Send",
+      "delete": "Delete",
       "selectConversation": "Select a conversation from the list or start a new one",
       "noMessagesYet": "No messages yet",
       "startConversation": "Start the conversation by sending a message",
@@ -223,6 +224,7 @@
       "failedToFetchConversations": "Failed to fetch conversations",
       "failedToFetchConversation": "Failed to fetch conversation",
       "failedToSendMessage": "Failed to send message",
+      "failedToDeleteMessage": "Failed to delete message",
       "failedToStartConversation": "Failed to start conversation",
       "loginToAccessMessages": "Please log in to access your messages"
     }
