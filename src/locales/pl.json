@@ -13,7 +13,10 @@
       "loadingTags": "Ładowanie tagów...",
       "comments": "komentarzy",
       "oneComment": "komentarz",
-      "twoComments": "komentarze"
+      "twoComments": "komentarze",
+      "copy": "Kopiuj",
+      "copied": "Skopiowano do schowka!",
+      "confirm": "Zapisałem mój klucz"
     },
     "timeAgo": {
       "yearsAgo": "{{count}} lat temu",
@@ -171,6 +174,9 @@
       "noExtensionFound": "Nie znaleziono rozszerzenia Nostr! Zainstaluj rozszerzenie NIP-07 lub wprowadź klucz ręcznie.",
       "extensionLoginError": "Wystąpił błąd podczas logowania przez rozszerzenie.",
       "invalidPublicKeyFormat": "Nieprawidłowy format klucza publicznego Nostr.",
+      "invalidPrivateKeyFormat": "Nieprawidłowy format klucza prywatnego Nostr.",
+      "invalidKeyFormat": "Nieprawidłowy format klucza. Użyj formatu npub, nsec lub hex.",
+      "privateKeyWarning": "Ostrzeżenie: Logowanie za pomocą klucza prywatnego nie jest zalecane ze względów bezpieczeństwa. Rozważ użycie rozszerzenia dla lepszego bezpieczeństwa.",
       "loginError": "Wystąpił błąd podczas logowania.",
       "loginWithNostr": "Zaloguj się przez Nostr",
       "loginWithExtensionTab": "Logowanie przez rozszerzenie",
@@ -178,11 +184,22 @@
       "clickToLoginWithExtension": "Kliknij poniżej, aby zalogować się przy użyciu rozszerzenia Nostr (NIP-07):",
       "loggingIn": "Logowanie...",
       "loginWithExtensionButton": "Zaloguj przez rozszerzenie",
-      "enterYourPublicKey": "Wprowadź swój klucz publiczny Nostr (npub lub hex):",
-      "publicKeyPlaceholder": "npub1... lub klucz hex",
+      "enterYourKey": "Wprowadź swój klucz Nostr (npub, nsec lub prywatny klucz):",
+      "keyPlaceholder": "npub1... lub nsec1... lub prywatny klucz",
       "loginButton": "Zaloguj",
       "noNostrAccount": "Nie masz jeszcze konta Nostr? Możesz utworzyć klucze przy użyciu różnych narzędzi, np.:",
-      "nos2xForFirefox": "nos2x for Firefox"
+      "nos2xForFirefox": "nos2x for Firefox",
+      "loginTab": "Logowanie"
+    },
+    "register": {
+      "registerWithNostr": "Zarejestruj się przez Nostr",
+      "registerTab": "Rejestracja",
+      "createNewAccount": "Utwórz nowe konto Nostr z wygenerowaną parą kluczy",
+      "creating": "Tworzenie konta...",
+      "createAccountButton": "Utwórz nowe konto",
+      "privateKeyWarning": "WAŻNE: Zapisz swój klucz prywatny w bezpiecznym miejscu. Zostanie on wyświetlony tylko raz i będziesz go potrzebować do logowania na innych urządzeniach. Jeśli go zgubisz, utracisz dostęp do swojego konta na zawsze.",
+      "savePrivateKey": "Twój klucz prywatny to: {{nsec}}. ZAPISZ TEN KLUCZ W BEZPIECZNYM MIEJSCU - nie zostanie on już nigdy wyświetlony!",
+      "registrationError": "Wystąpił błąd podczas rejestracji. Spróbuj ponownie."
     },
     "messages": {
       "directMessages": "Wiadomości bezpośrednie",

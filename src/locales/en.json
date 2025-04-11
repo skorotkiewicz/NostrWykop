@@ -13,7 +13,10 @@
       "loadingTags": "Loading tags...",
       "comments": "comments",
       "oneComment": "comment",
-      "twoComments": "comments"
+      "twoComments": "comments",
+      "copy": "Copy",
+      "copied": "Copied to clipboard!",
+      "confirm": "I've saved my key"
     },
     "timeAgo": {
       "yearsAgo": "{{count}} years ago",
@@ -171,6 +174,9 @@
       "noExtensionFound": "Nostr extension not found! Please install a NIP-07 extension or enter your key manually.",
       "extensionLoginError": "Error occurred during extension login.",
       "invalidPublicKeyFormat": "Invalid Nostr public key format.",
+      "invalidPrivateKeyFormat": "Invalid Nostr private key format.",
+      "invalidKeyFormat": "Invalid key format. Please use npub, nsec, or hex format.",
+      "privateKeyWarning": "Warning: Logging in with a private key is not recommended for security reasons. Please consider using an extension for better security.",
       "loginError": "Error occurred during login.",
       "loginWithNostr": "Login with Nostr",
       "loginWithExtensionTab": "Extension Login",
@@ -178,11 +184,22 @@
       "clickToLoginWithExtension": "Click below to login using your Nostr extension (NIP-07):",
       "loggingIn": "Logging in...",
       "loginWithExtensionButton": "Login with Extension",
-      "enterYourPublicKey": "Enter your Nostr public key (npub or hex):",
-      "publicKeyPlaceholder": "npub1... or hex key",
+      "enterYourKey": "Enter your Nostr key (npub, nsec, or private key):",
+      "keyPlaceholder": "npub1... or nsec1... or private key",
       "loginButton": "Login",
       "noNostrAccount": "Don't have a Nostr account yet? You can create keys using various tools, such as:",
-      "nos2xForFirefox": "nos2x for Firefox"
+      "nos2xForFirefox": "nos2x for Firefox",
+      "loginTab": "Login"
+    },
+    "register": {
+      "registerWithNostr": "Register with Nostr",
+      "registerTab": "Register",
+      "createNewAccount": "Create a new Nostr account with a generated key pair",
+      "creating": "Creating account...",
+      "createAccountButton": "Create New Account",
+      "privateKeyWarning": "IMPORTANT: Save your private key in a secure location. It will only be shown once, and you will need it to log in on other devices. If you lose it, you will lose access to your account forever.",
+      "savePrivateKey": "Your private key is: {{nsec}}. SAVE THIS KEY IN A SECURE LOCATION - it will never be shown again!",
+      "registrationError": "Error occurred during registration. Please try again."
     },
     "messages": {
       "directMessages": "Direct Messages",
