@@ -40,24 +40,28 @@ class NostrClient {
     }
   }
 
+  async getKeypair() {
+    return JSON.parse(localStorage.getItem("keypair")) || {};
+  }
+
   async encryptDM(key, content) {
-    const keypair = JSON.parse(localStorage.getItem("keypair")) || {};
+    const keypair = await this.getKeypair();
 
     return keypair.sk === "nip07"
       ? await window.nostr.nip04.encrypt(key, content)
-      : this.nip04.encrypt(key, content);
+      : this.nip04.encrypt(keypair.sk, key, content);
   }
 
   async decryptDM(key, content) {
-    const keypair = JSON.parse(localStorage.getItem("keypair")) || {};
+    const keypair = await this.getKeypair();
 
     return keypair.sk === "nip07"
       ? await window.nostr.nip04.decrypt(key, content)
-      : this.nip04.decrypt(key, content);
+      : this.nip04.decrypt(keypair.sk, key, content);
   }
 
   async signEvent(event) {
-    const keypair = JSON.parse(localStorage.getItem("keypair")) || {};
+    const keypair = await this.getKeypair();
 
     return keypair.sk === "nip07"
       ? await window.nostr.signEvent(event)
@@ -65,7 +69,7 @@ class NostrClient {
   }
 
   async getMyPublicKey() {
-    const keypair = JSON.parse(localStorage.getItem("keypair")) || {};
+    const keypair = await this.getKeypair();
 
     return keypair.sk === "nip07"
       ? await window.nostr.getPublicKey()
@@ -417,10 +421,6 @@ class NostrClient {
       throw new Error("Nostr client not connected");
     }
 
-    // if (!window.nostr) {
-    //   throw new Error("Nostr extension not found");
-    // }
-
     try {
       // Tworzymy zdarzenie komentarza
       const event = {
@@ -430,9 +430,7 @@ class NostrClient {
         created_at: Math.floor(Date.now() / 1000),
       };
 
-      // // Podpisujemy zdarzenie przy użyciu rozszerzenia NIP-07
-      // const signedEvent = await window.nostr.signEvent(event);
-
+      // Podpisujemy zdarzenie przy użyciu rozszerzenia NIP-07
       const signedEvent = await this.signEvent(event);
 
       // Publikujemy zdarzenie do przekaźników
@@ -462,10 +460,6 @@ class NostrClient {
       throw new Error("Nostr client not connected");
     }
 
-    // if (!window.nostr) {
-    //   throw new Error("Nostr extension not found");
-    // }
-
     try {
       // Tworzymy zdarzenie odpowiedzi
       const event = {
@@ -475,9 +469,7 @@ class NostrClient {
         created_at: Math.floor(Date.now() / 1000),
       };
 
-      // // Podpisujemy zdarzenie przy użyciu rozszerzenia NIP-07
-      // const signedEvent = await window.nostr.signEvent(event);
-
+      // Podpisujemy zdarzenie przy użyciu rozszerzenia NIP-07
       const signedEvent = await this.signEvent(event);
 
       // Publikujemy zdarzenie do przekaźników
@@ -507,10 +499,6 @@ class NostrClient {
       throw new Error("Nostr client not connected");
     }
 
-    // if (!window.nostr) {
-    //   throw new Error("Nostr extension not found");
-    // }
-
     try {
       // Tworzymy zdarzenie reakcji (kind 7) dla głosowania
       const content = isUpvote ? "+" : "-";
@@ -522,9 +510,7 @@ class NostrClient {
         created_at: Math.floor(Date.now() / 1000),
       };
 
-      // // Podpisujemy zdarzenie przy użyciu rozszerzenia NIP-07
-      // const signedEvent = await window.nostr.signEvent(event);
-
+      // Podpisujemy zdarzenie przy użyciu rozszerzenia NIP-07
       const signedEvent = await this.signEvent(event);
 
       // Publikujemy zdarzenie do przekaźników
@@ -548,10 +534,6 @@ class NostrClient {
       throw new Error("Nostr client not connected");
     }
 
-    // if (!window.nostr) {
-    //   throw new Error("Nostr extension not found");
-    // }
-
     try {
       // Normalizujemy klucz publiczny (jeśli jest w formacie npub)
       let normalizedPubkey = pubkey;
@@ -565,7 +547,6 @@ class NostrClient {
       }
 
       // Pobieramy bieżącą listę obserwowanych użytkowników
-      // const userPubkey = await window.nostr.getPublicKey();
       const userPubkey = await this.getMyPublicKey();
       const followListEvents = await this.pool.querySync(this.relays, {
         authors: [userPubkey],
@@ -600,9 +581,7 @@ class NostrClient {
         created_at: Math.floor(Date.now() / 1000),
       };
 
-      // // Podpisujemy zdarzenie przy użyciu rozszerzenia NIP-07
-      // const signedEvent = await window.nostr.signEvent(event);
-
+      // Podpisujemy zdarzenie przy użyciu rozszerzenia NIP-07
       const signedEvent = await this.signEvent(event);
 
       // Publikujemy zdarzenie do przekaźników
@@ -621,10 +600,6 @@ class NostrClient {
       throw new Error("Nostr client not connected");
     }
 
-    // if (!window.nostr) {
-    //   throw new Error("Nostr extension not found");
-    // }
-
     try {
       // Normalizujemy klucz publiczny (jeśli jest w formacie npub)
       let normalizedPubkey = pubkey;
@@ -638,7 +613,6 @@ class NostrClient {
       }
 
       // Pobieramy bieżącą listę obserwowanych użytkowników
-      // const userPubkey = await window.nostr.getPublicKey();
       const userPubkey = await this.getMyPublicKey();
       const followListEvents = await this.pool.querySync(this.relays, {
         authors: [userPubkey],
@@ -675,9 +649,7 @@ class NostrClient {
         created_at: Math.floor(Date.now() / 1000),
       };
 
-      // // Podpisujemy zdarzenie przy użyciu rozszerzenia NIP-07
-      // const signedEvent = await window.nostr.signEvent(event);
-
+      // Podpisujemy zdarzenie przy użyciu rozszerzenia NIP-07
       const signedEvent = await this.signEvent(event);
 
       // Publikujemy zdarzenie do przekaźników
@@ -1079,13 +1051,8 @@ class NostrClient {
       throw new Error("Nostr client not connected");
     }
 
-    // if (!window.nostr) {
-    //   throw new Error("Nostr extension not found");
-    // }
-
     try {
       // Pobieramy klucz publiczny użytkownika
-      // const userPubkey = await window.nostr.getPublicKey();
       const userPubkey = await this.getMyPublicKey();
 
       // Tworzymy zdarzenie kind 5 (usunięcie zdarzenia)
@@ -1097,8 +1064,7 @@ class NostrClient {
         created_at: Math.floor(Date.now() / 1000),
       };
 
-      // // Podpisujemy zdarzenie
-      // const signedEvent = await window.nostr.signEvent(event);
+      // Podpisujemy zdarzenie
       const signedEvent = await this.signEvent(event);
 
       // Publikujemy zdarzenie do przekaźników
@@ -1118,10 +1084,6 @@ class NostrClient {
       throw new Error("Nostr client not connected");
     }
 
-    // if (!window.nostr) {
-    //   throw new Error("Nostr extension not found");
-    // }
-
     try {
       // Normalizujemy klucz publiczny odbiorcy (jeśli jest w formacie npub)
       let normalizedRecipientPubkey = recipientPubkey;
@@ -1136,7 +1098,6 @@ class NostrClient {
       }
 
       // Pobieramy klucz publiczny nadawcy
-      // const senderPubkey = await window.nostr.getPublicKey();
       const senderPubkey = await this.getMyPublicKey();
 
       // Szyfrujemy treść wiadomości używając NIP-04
@@ -1144,10 +1105,6 @@ class NostrClient {
         normalizedRecipientPubkey,
         content,
       );
-      // const encryptedContent = await window.nostr.nip04.encrypt(
-      //   normalizedRecipientPubkey,
-      //   content,
-      // );
 
       // Tworzymy zdarzenie kind 4 (zaszyfrowana wiadomość bezpośrednia)
       const event = {
@@ -1158,9 +1115,7 @@ class NostrClient {
         created_at: Math.floor(Date.now() / 1000),
       };
 
-      // // Podpisujemy zdarzenie przy użyciu rozszerzenia NIP-07
-      // const signedEvent = await window.nostr.signEvent(event);
-
+      // Podpisujemy zdarzenie przy użyciu rozszerzenia NIP-07
       const signedEvent = await this.signEvent(event);
 
       // Publikujemy zdarzenie do przekaźników
@@ -1188,10 +1143,6 @@ class NostrClient {
       throw new Error("Nostr client not connected");
     }
 
-    // if (!window.nostr) {
-    //   throw new Error("Nostr extension not found");
-    // }
-
     try {
       // Normalizujemy klucz publiczny rozmówcy (jeśli jest w formacie npub)
       let normalizedOtherPubkey = otherUserPubkey;
@@ -1206,7 +1157,6 @@ class NostrClient {
       }
 
       // Pobieramy klucz publiczny zalogowanego użytkownika
-      // const userPubkey = await window.nostr.getPublicKey();
       const userPubkey = await this.getMyPublicKey();
 
       // Pobieramy wiadomości wysłane przez użytkownika do rozmówcy
@@ -1248,20 +1198,12 @@ class NostrClient {
                 normalizedOtherPubkey,
                 event.content,
               );
-              // decryptedContent = await window.nostr.nip04.decrypt(
-              //   normalizedOtherPubkey,
-              //   event.content,
-              // );
             } else {
               // Odbiorca - deszyfrujemy używając klucza nadawcy
               decryptedContent = await this.decryptDM(
                 event.pubkey,
                 event.content,
               );
-              // decryptedContent = await window.nostr.nip04.decrypt(
-              //   event.pubkey,
-              //   event.content,
-              // );
             }
           } catch (error) {
             console.error("Failed to decrypt message:", error);
@@ -1292,12 +1234,7 @@ class NostrClient {
       throw new Error("Nostr client not connected");
     }
 
-    // if (!window.nostr) {
-    //   throw new Error("Nostr extension not found");
-    // }
-
     try {
-      // const userPubkey = await window.nostr.getPublicKey();
       const userPubkey = await this.getMyPublicKey();
 
       // Pobieramy wiadomości wysłane przez użytkownika
@@ -1341,10 +1278,6 @@ class NostrClient {
                 recipientPubkey,
                 event.content,
               );
-              // decryptedContent = await window.nostr.nip04.decrypt(
-              //   recipientPubkey,
-              //   event.content,
-              // );
             } catch (error) {
               decryptedContent = "[Failed to decrypt message]";
             }
@@ -1375,10 +1308,6 @@ class NostrClient {
               senderPubkey,
               event.content,
             );
-            // decryptedContent = await window.nostr.nip04.decrypt(
-            //   senderPubkey,
-            //   event.content,
-            // );
           } catch (error) {
             decryptedContent = "[Failed to decrypt message]";
           }

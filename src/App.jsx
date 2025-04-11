@@ -26,7 +26,7 @@ function App() {
         setNostrClient(client);
 
         // Sprawdź, czy użytkownik jest zalogowany
-        const userPubKey = JSON.parse(localStorage.getItem("keypair") || {});
+        const userPubKey = JSON.parse(localStorage.getItem("keypair")) || {};
         if (userPubKey.pk) {
           // Pobierz profil użytkownika z Nostr
           const userProfile = await client.getUserProfile(userPubKey.pk);
@@ -43,6 +43,8 @@ function App() {
   }, []);
 
   const handleLogin = async (keypair) => {
+    if (!nostrClient) return;
+
     try {
       if (keypair.sk === "nip07") {
         const userProfile = await nostrClient.getUserProfile(keypair.pk);
@@ -56,16 +58,9 @@ function App() {
         setCurrentUser(userProfile);
         localStorage.setItem("keypair", JSON.stringify(keypair));
       }
-    } catch (error) {}
-
-    // if (!nostrClient) return;
-    // try {
-    //   const userProfile = await nostrClient.getUserProfile(pubkey);
-    //   setCurrentUser(userProfile);
-    //   localStorage.setItem("keypair", pubkey);
-    // } catch (error) {
-    //   console.error("Login failed:", error);
-    // }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleLogout = () => {

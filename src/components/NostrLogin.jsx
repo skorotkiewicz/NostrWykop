@@ -95,10 +95,7 @@ function NostrLogin({ onLogin, onClose }) {
       // Generujemy nową parę kluczy za pomocą nostr-tools
       const { getPublicKey, generateSecretKey } = await import("nostr-tools");
 
-      // Generujemy nowy klucz prywatny
       const privateKey = generateSecretKey();
-
-      // Obliczamy odpowiadający mu klucz publiczny
       const publicKey = getPublicKey(privateKey);
 
       // Konwertujemy klucze do formatu npub i nsec
