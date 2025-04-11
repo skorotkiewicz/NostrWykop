@@ -1,4 +1,5 @@
 import { nip19 } from "nostr-tools";
+import { bytesToHex } from "../utils/bytesToHex";
 
 const NO_TITLE = "-🌎-"; // "No title";
 
@@ -46,26 +47,50 @@ class NostrClient {
 
   async encryptDM(key, content) {
     const keypair = await this.getKeypair();
+    const privateKey = keypair.sk;
 
-    return keypair.sk === "nip07"
-      ? await window.nostr.nip04.encrypt(key, content)
-      : this.nip04.encrypt(keypair.sk, key, content);
+    if (privateKey === "nip07") {
+      return await window.nostr.nip04.encrypt(key, content);
+    }
+
+    if (privateKey.startsWith("nsec")) {
+      const { data } = nip19.decode(privateKey);
+      return this.nip04.encrypt(data, key, content);
+    }
+
+    return this.nip04.encrypt(privateKey, key, content);
   }
 
   async decryptDM(key, content) {
     const keypair = await this.getKeypair();
+    const privateKey = keypair.sk;
 
-    return keypair.sk === "nip07"
-      ? await window.nostr.nip04.decrypt(key, content)
-      : this.nip04.decrypt(keypair.sk, key, content);
+    if (privateKey === "nip07") {
+      return await window.nostr.nip04.decrypt(key, content);
+    }
+
+    if (privateKey.startsWith("nsec")) {
+      const { data } = nip19.decode(privateKey);
+      return this.nip04.decrypt(data, key, content);
+    }
+
+    return this.nip04.decrypt(privateKey, key, content);
   }
 
   async signEvent(event) {
     const keypair = await this.getKeypair();
+    const privateKey = keypair.sk;
 
-    return keypair.sk === "nip07"
-      ? await window.nostr.signEvent(event)
-      : this.sign(event, keypair.sk);
+    if (privateKey === "nip07") {
+      return await window.nostr.signEvent(event);
+    }
+
+    if (privateKey.startsWith("nsec")) {
+      const { data } = nip19.decode(privateKey);
+      return this.sign(event, data);
+    }
+
+    return this.sign(event, privateKey);
   }
 
   async getMyPublicKey() {

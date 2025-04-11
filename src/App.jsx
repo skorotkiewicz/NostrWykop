@@ -26,7 +26,8 @@ function App() {
         setNostrClient(client);
 
         // Sprawdź, czy użytkownik jest zalogowany
-        const userPubKey = JSON.parse(localStorage.getItem("keypair")) || {};
+        const userPubKey =
+          (await JSON.parse(localStorage.getItem("keypair"))) || {};
         if (userPubKey.pk) {
           // Pobierz profil użytkownika z Nostr
           const userProfile = await client.getUserProfile(userPubKey.pk);
