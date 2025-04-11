@@ -1,5 +1,4 @@
 import { nip19 } from "nostr-tools";
-import { bytesToHex } from "../utils/bytesToHex";
 
 const NO_TITLE = "-🌎-"; // "No title";
 

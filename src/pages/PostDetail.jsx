@@ -6,11 +6,27 @@ import useTranslate from "../utils/useTranslate";
 
 function PostDetail({ nostrClient, currentUser }) {
   const { t } = useTranslate();
-  const { id } = useParams();
+  const { id: idx } = useParams();
+  const [id, setId] = useState("");
   const [post, setPost] = useState(null);
   const [comments, setComments] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [newComment, setNewComment] = useState("");
+
+  useEffect(() => {
+    async function parseId() {
+      if (idx.startsWith("note1")) {
+        const { nip19 } = await import("nostr-tools");
+
+        const { data } = nip19.decode(idx);
+        return setId(data);
+      }
+
+      return setId(idx);
+    }
+
+    parseId();
+  }, [idx]);
 
   useEffect(() => {
     const fetchPostDetails = async () => {
