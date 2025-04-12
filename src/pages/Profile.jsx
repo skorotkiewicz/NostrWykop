@@ -19,7 +19,6 @@ function Profile({ nostrClient, currentUser }) {
   const [followers, setFollowers] = useState([]);
   const [following, setFollowing] = useState([]);
   const [isLoadingUsers, setIsLoadingUsers] = useState(false);
-  const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [profileForm, setProfileForm] = useState({
     name: "",
     avatar: "",
@@ -117,7 +116,7 @@ function Profile({ nostrClient, currentUser }) {
           let parentPost = null;
           try {
             parentPost = await nostrClient.getPostById(replyTo);
-          } catch (error) {
+          } catch (_error) {
             // Jeśli nie udało się pobrać posta, to prawdopodobnie to jest odpowiedź na komentarz
           }
 
@@ -170,7 +169,7 @@ function Profile({ nostrClient, currentUser }) {
           let post = null;
           try {
             post = await nostrClient.getPostById(postId);
-          } catch (error) {
+          } catch (_error) {
             return null; // Pomijamy, jeśli nie można pobrać posta
           }
 
@@ -331,7 +330,6 @@ function Profile({ nostrClient, currentUser }) {
   };
 
   const handleEditProfile = () => {
-    setIsEditingProfile(true);
     setActiveTab("edit");
   };
 
@@ -345,7 +343,6 @@ function Profile({ nostrClient, currentUser }) {
         nip05: profile.nip05 || "",
       });
     }
-    setIsEditingProfile(false);
     setActiveTab("posts");
     setError(null);
   };
@@ -378,7 +375,6 @@ function Profile({ nostrClient, currentUser }) {
       });
 
       setProfile(updatedProfile);
-      setIsEditingProfile(false);
       setActiveTab("posts");
     } catch (error) {
       console.error("Failed to update profile:", error);

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import useTranslate from "../utils/useTranslate";
 import NewMessageForm from "../components/Messages/NewMessageForm";
 import ConversationList from "../components/Messages/ConversationList";
@@ -109,8 +109,8 @@ function Messages({ nostrClient, currentUser }) {
       await nostrClient.deleteMessage(messageId);
 
       // Usuwamy wiadomość z listy
-      setMessages((prevMessages) => 
-        prevMessages.filter((message) => message.id !== messageId)
+      setMessages((prevMessages) =>
+        prevMessages.filter((message) => message.id !== messageId),
       );
 
       // Odświeżamy listę konwersacji

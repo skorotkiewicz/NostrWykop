@@ -37,7 +37,7 @@ function ConversationView({
   const formatPubkey = (pubkey) => {
     try {
       return `${nip19.npubEncode(pubkey).slice(0, 10)}...`;
-    } catch (error) {
+    } catch (_error) {
       return `${pubkey.slice(0, 10)}...`;
     }
   };

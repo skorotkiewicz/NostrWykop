@@ -1080,7 +1080,7 @@ class NostrClient {
       const postsPromises = postIds.map(async (postId) => {
         try {
           return await this.getPostById(postId);
-        } catch (error) {
+        } catch (_error) {
           return null;
         }
       });
@@ -1101,7 +1101,7 @@ class NostrClient {
   }
 
   // Pobieranie zapisanych postów TODO
-  async getSavedPosts(pubkey) {
+  async getSavedPosts(_pubkey) {
     // W prawdziwej implementacji zostałoby to zintegrowane z zapisywaniem postów w Nostr
     // Na razie zwracamy pustą tablicę jako zaślepkę
     console.warn("getSavedPosts method is not fully implemented yet");
@@ -1343,7 +1343,7 @@ class NostrClient {
                 recipientPubkey,
                 event.content,
               );
-            } catch (error) {
+            } catch (_error) {
               decryptedContent = "[Failed to decrypt message]";
             }
 
@@ -1373,7 +1373,7 @@ class NostrClient {
               senderPubkey,
               event.content,
             );
-          } catch (error) {
+          } catch (_error) {
             decryptedContent = "[Failed to decrypt message]";
           }
 

@@ -99,7 +99,7 @@ function NostrLogin({ onLogin, onClose }) {
       const publicKey = getPublicKey(privateKey);
 
       // Konwertujemy klucze do formatu npub i nsec
-      const npub = nip19.npubEncode(publicKey);
+      // const npub = nip19.npubEncode(publicKey);
       const nsec = nip19.nsecEncode(privateKey);
 
       // Zapisujemy nsec do wyświetlenia w komponencie

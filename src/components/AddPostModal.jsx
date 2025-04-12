@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useTranslate from "../utils/useTranslate";
 
-function AddPostModal({ currentUser, nostrClient, onClose }) {
+function AddPostModal({ nostrClient, onClose }) {
   const { t } = useTranslate();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
