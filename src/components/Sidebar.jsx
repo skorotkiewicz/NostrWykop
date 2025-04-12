@@ -329,14 +329,14 @@ function Sidebar({ nostrClient, currentUser }) {
         </div>
         <div className="social-links">
           <a
-            href="https://github.com/twój-username/nostrwykop"
+            href="https://github.com/skorotkiewicz/NostrWykop"
             target="_blank"
             rel="noopener noreferrer"
           >
             GitHub
           </a>
           <a
-            href="https://nostr.com/twój-npub"
+            href="https://nostr.com/"
             target="_blank"
             rel="noopener noreferrer"
           >

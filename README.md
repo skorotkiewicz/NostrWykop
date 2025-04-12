@@ -74,7 +74,7 @@ Users must have a Nostr-compatible browser extension installed to log in, post c
 ## 🗺️ Roadmap
 
 - [ ] Enhanced media embedding
-- [~] Direct messaging between users
+- [x] Direct messaging between users
 - [ ] Custom themes and dark mode
 - [ ] Mobile application
 - [ ] Integration with additional Nostr clients
