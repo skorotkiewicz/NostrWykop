@@ -19,7 +19,7 @@ A modern, decentralized social platform built on the [Nostr protocol](https://no
 
 - Node.js (v18.0.0 or higher)
 - npm or yarn
-- A Nostr-compatible browser extension (e.g., [nos2x](https://github.com/fiatjaf/nos2x), [Alby](https://getalby.com/), or [Flamingo](https://www.getflamingo.org/))
+- A Nostr-compatible browser extension (e.g., [nos2x](https://github.com/fiatjaf/nos2x), [Alby](https://getalby.com/), or [Flamingo](https://www.getflamingo.org/)) (optional)
 
 ### Installation
 
@@ -68,8 +68,6 @@ NostrWykop connects to multiple Nostr relays to provide a robust and decentraliz
 
 - wss://relay.damus.io
 - wss://nos.lol
-
-Users must have a Nostr-compatible browser extension installed to log in, post content, and interact with others on the platform.
 
 ## 🗺️ Roadmap
 
