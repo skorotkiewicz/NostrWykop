@@ -7,18 +7,18 @@
 .conversation-item {
   display: flex;
   padding: 12px 15px;
-  border-bottom: 1px solid #e1e4e8;
+  border-bottom: 1px solid var(--border-color);
   text-decoration: none;
-  color: inherit;
+  color: var(--text-color);
   transition: background-color 0.2s;
 }
 
 .conversation-item:hover {
-  background-color: #f6f8fa;
+  background-color: var(--gray-lighter);
 }
 
 .conversation-item.selected {
-  background-color: #eaf5ff;
+  background-color: rgba(0, 123, 255, 0.1);
   border-left: 3px solid #007bff;
 }
 
@@ -40,8 +40,8 @@
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background-color: #cfd8dc;
-  color: #455a64;
+  background-color: var(--gray-lighter);
+  color: var(--text-color);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -83,7 +83,7 @@
 
 .conversation-last-message {
   font-size: 0.85rem;
-  color: #6c757d;
+  color: var(--gray-light);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -92,7 +92,7 @@
 
 .conversation-time {
   font-size: 0.75rem;
-  color: #8795a1;
+  color: var(--gray-light);
   align-self: flex-end;
 }
 
@@ -100,5 +100,7 @@
 .conversations-empty {
   padding: 20px;
   text-align: center;
-  color: #6c757d;
+  color: var(--gray-light);
+  background-color: var(--card-bg);
+  border-radius: 8px;
 }

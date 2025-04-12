@@ -12,7 +12,7 @@
 }
 
 .new-message-content {
-  background-color: white;
+  background-color: var(--card-bg);
   border-radius: 8px;
   padding: 25px;
   width: 90%;
@@ -29,18 +29,18 @@
   background: none;
   font-size: 24px;
   cursor: pointer;
-  color: #6c757d;
+  color: var(--gray-light);
 }
 
 .close-btn:hover {
-  color: #343a40;
+  color: var(--text-color);
 }
 
 .new-message-content h2 {
   margin-top: 0;
   margin-bottom: 20px;
   font-size: 1.5rem;
-  color: #343a40;
+  color: var(--text-color);
 }
 
 .recipient-input-group,
@@ -53,7 +53,7 @@
   display: block;
   margin-bottom: 8px;
   font-weight: 600;
-  color: #495057;
+  color: var(--text-color);
 }
 
 .recipient-input-with-button {
@@ -64,9 +64,11 @@
 .recipient-input-with-button input {
   flex: 1;
   padding: 10px;
-  border: 1px solid #ced4da;
+  border: 1px solid var(--border-color);
   border-radius: 5px;
   font-size: 0.9rem;
+  background-color: var(--card-bg);
+  color: var(--text-color);
 }
 
 .recipient-input-with-button button {
@@ -100,9 +102,9 @@
   display: flex;
   align-items: center;
   padding: 10px;
-  background-color: #f8f9fa;
+  background-color: var(--bg-color);
   border-radius: 5px;
-  border: 1px solid #e9ecef;
+  border: 1px solid var(--border-color);
 }
 
 .recipient-avatar {
@@ -129,17 +131,19 @@
 
 .recipient-nip05 {
   font-size: 0.85rem;
-  color: #6c757d;
+  color: var(--gray-light);
 }
 
 .message-input-group textarea {
   width: 100%;
   padding: 10px;
-  border: 1px solid #ced4da;
+  border: 1px solid var(--border-color);
   border-radius: 5px;
   resize: vertical;
   font-family: inherit;
   font-size: 0.9rem;
+  background-color: var(--card-bg);
+  color: var(--text-color);
 }
 
 .message-input-group textarea:focus,
