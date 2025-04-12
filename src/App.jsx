@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import useTranslate from "./utils/useTranslate";
-import { ThemeProvider } from "./contexts/ThemeContext";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import PostDetail from "./pages/PostDetail";
@@ -72,82 +71,80 @@ function App() {
   }
 
   return (
-    <ThemeProvider>
-      <div className="app">
-        <Header
-          currentUser={currentUser}
-          onLogin={handleLogin}
-          onLogout={handleLogout}
-          nostrClient={nostrClient}
-        />
-        <div className="main-container">
-          <Sidebar nostrClient={nostrClient} currentUser={currentUser} />
-          <main className="content">
-            <Routes>
-              <Route
-                path="/"
-                element={
-                  <MainFeed nostrClient={nostrClient} currentUser={currentUser} />
-                }
-              />
-              <Route
-                path="/post/:id"
-                element={
-                  <PostDetail
-                    nostrClient={nostrClient}
-                    currentUser={currentUser}
-                  />
-                }
-              />
-              <Route
-                path="/profile/:pubkey"
-                element={
-                  <Profile nostrClient={nostrClient} currentUser={currentUser} />
-                }
-              />
-              <Route
-                path="/feed/:type"
-                element={
-                  <MainFeed
-                    nostrClient={nostrClient}
-                    currentUser={currentUser}
-                    feedType="user"
-                  />
-                }
-              />
-              <Route
-                path="/tag/:tag"
-                element={
-                  <MainFeed
-                    nostrClient={nostrClient}
-                    currentUser={currentUser}
-                    feedType="tag"
-                  />
-                }
-              />
-              <Route
-                path="/search"
-                element={
-                  <Search nostrClient={nostrClient} currentUser={currentUser} />
-                }
-              />
-              <Route
-                path="/messages"
-                element={
-                  <Messages nostrClient={nostrClient} currentUser={currentUser} />
-                }
-              />
-              <Route
-                path="/messages/:pubkey"
-                element={
-                  <Messages nostrClient={nostrClient} currentUser={currentUser} />
-                }
-              />
-            </Routes>
-          </main>
-        </div>
+    <div className="app">
+      <Header
+        currentUser={currentUser}
+        onLogin={handleLogin}
+        onLogout={handleLogout}
+        nostrClient={nostrClient}
+      />
+      <div className="main-container">
+        <Sidebar nostrClient={nostrClient} currentUser={currentUser} />
+        <main className="content">
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <MainFeed nostrClient={nostrClient} currentUser={currentUser} />
+              }
+            />
+            <Route
+              path="/post/:id"
+              element={
+                <PostDetail
+                  nostrClient={nostrClient}
+                  currentUser={currentUser}
+                />
+              }
+            />
+            <Route
+              path="/profile/:pubkey"
+              element={
+                <Profile nostrClient={nostrClient} currentUser={currentUser} />
+              }
+            />
+            <Route
+              path="/feed/:type"
+              element={
+                <MainFeed
+                  nostrClient={nostrClient}
+                  currentUser={currentUser}
+                  feedType="user"
+                />
+              }
+            />
+            <Route
+              path="/tag/:tag"
+              element={
+                <MainFeed
+                  nostrClient={nostrClient}
+                  currentUser={currentUser}
+                  feedType="tag"
+                />
+              }
+            />
+            <Route
+              path="/search"
+              element={
+                <Search nostrClient={nostrClient} currentUser={currentUser} />
+              }
+            />
+            <Route
+              path="/messages"
+              element={
+                <Messages nostrClient={nostrClient} currentUser={currentUser} />
+              }
+            />
+            <Route
+              path="/messages/:pubkey"
+              element={
+                <Messages nostrClient={nostrClient} currentUser={currentUser} />
+              }
+            />
+          </Routes>
+        </main>
       </div>
-    </ThemeProvider>
+    </div>
   );
 }
 
