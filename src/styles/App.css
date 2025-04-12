@@ -39,6 +39,7 @@
   }
 }
 
+.comment-votes button:hover,
 .post-votes button:hover {
   background-color: transparent;
 }
@@ -412,11 +413,10 @@ textarea:focus {
 
 .post-Tager {
   text-decoration: none;
-  margin: 0 5px 5px 0;
+  margin: 10px 5px 5px 0;
   padding: 2px 8px;
-  background-color: #f0f0f0;
-  border-radius: 12px;
-  color: #333;
+  background-color: var(--gray-lighter);
+  color: var(--text-color);
   font-size: 12px;
   display: inline-block;
 }
