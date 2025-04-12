@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import useTranslate from "../utils/useTranslate";
+import ThemeToggle from "./ThemeToggle";
 import NostrLogin from "./NostrLogin";
 import AddPostModal from "./AddPostModal";
 
@@ -35,6 +36,7 @@ function Header({ currentUser, onLogin, onLogout, nostrClient }) {
         </form>
       </div>
       <div className="header-right">
+        <ThemeToggle />
         {currentUser ? (
           <>
             <Link

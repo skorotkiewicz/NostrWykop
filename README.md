@@ -12,6 +12,7 @@ A modern, decentralized social platform built on the [Nostr protocol](https://no
 - **Content Discovery**: Search for posts, filter by tags, and discover trending content
 - **Customizable Feeds**: View posts from followed users or explore specific tags
 - **Responsive Design**: Works seamlessly on desktop and mobile devices
+- **Dark/Light Mode**: Switch between themes for optimal viewing experience
 
 ## 🚀 Getting Started
 
@@ -73,7 +74,7 @@ NostrWykop connects to multiple Nostr relays to provide a robust and decentraliz
 
 - [ ] Enhanced media embedding
 - [x] Direct messaging between users
-- [ ] Custom themes and dark mode
+- [x] Custom themes and dark mode
 - [ ] Mobile application
 - [ ] Integration with additional Nostr clients
 - [ ] Community moderation tools

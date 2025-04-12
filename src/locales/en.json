@@ -18,6 +18,11 @@
       "copied": "Copied to clipboard!",
       "confirm": "I've saved my key"
     },
+    "theme": {
+      "toggle": "Toggle dark/light mode",
+      "dark": "Dark mode",
+      "light": "Light mode"
+    },
     "timeAgo": {
       "yearsAgo": "{{count}} years ago",
       "yearAgo": "a year ago",

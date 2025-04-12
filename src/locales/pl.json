@@ -18,6 +18,11 @@
       "copied": "Skopiowano do schowka!",
       "confirm": "Zapisałem mój klucz"
     },
+    "theme": {
+      "toggle": "Przełącz tryb jasny/ciemny",
+      "dark": "Tryb ciemny",
+      "light": "Tryb jasny"
+    },
     "timeAgo": {
       "yearsAgo": "{{count}} lat temu",
       "yearAgo": "rok temu",
