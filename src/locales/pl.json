@@ -139,7 +139,18 @@
       "loginToFollow": "Musisz być zalogowany, aby obserwować użytkowników!",
       "loginToVote": "Musisz być zalogowany, aby głosować!",
       "loginToMessage": "Musisz być zalogowany, aby wysyłać wiadomości!",
-      "sendMessage": "Wiadomość"
+      "sendMessage": "Wiadomość",
+      "saving": "Zapisywanie...",
+      "saveChanges": "Zapisz zmiany",
+      "nip05": "NIP-05",
+      "nip05Placeholder": "Wprowadź swój identyfikator NIP-05 (np. twoja_nazwa@twoja_domena.com)",
+      "about": "O mnie",
+      "aboutPlaceholder": "Napisz coś o sobie...",
+      "name": "Imię",
+      "namePlaceholder": "Wpisz swoje imię...",
+      "avatarPlaceholder": "Wprowadź adres URL swojego awatara...",
+      "nip05Info": "NIP-05 to opcjonalny identyfikator, który można użyć do weryfikacji tożsamości. Możesz go ustawić na swoim serwerze Nostr lub użyć zewnętrznego dostawcy.",
+      "avatarPreview": "Podgląd awatara"
     },
     "comment": {
       "reply": "Odpowiedz",

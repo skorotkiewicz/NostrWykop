@@ -19,6 +19,15 @@ function Profile({ nostrClient, currentUser }) {
   const [followers, setFollowers] = useState([]);
   const [following, setFollowing] = useState([]);
   const [isLoadingUsers, setIsLoadingUsers] = useState(false);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [profileForm, setProfileForm] = useState({
+    name: "",
+    avatar: "",
+    about: "",
+    nip05: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState(null);
   const [profileStats, setProfileStats] = useState({
     postsCount: 0,
     followersCount: 0,
@@ -32,6 +41,14 @@ function Profile({ nostrClient, currentUser }) {
         // Pobierz profil użytkownika
         const profileData = await nostrClient.getUserProfile(pubkey);
         setProfile(profileData);
+
+        // Ustaw dane formularza na podstawie pobranego profilu
+        setProfileForm({
+          name: profileData.name || "",
+          avatar: profileData.avatar || "",
+          about: profileData.about || "",
+          nip05: profileData.nip05 || "",
+        });
 
         // Pobierz posty użytkownika
         const posts = await nostrClient.getUserPosts(pubkey);
@@ -302,15 +319,73 @@ function Profile({ nostrClient, currentUser }) {
       console.error("Failed to follow/unfollow user:", error);
     }
   };
-  
+
   const handleMessage = () => {
     if (!currentUser) {
       alert(t("profile.loginToMessage"));
       return;
     }
-    
+
     // Nawigacja do strony wiadomości z wybranym użytkownikiem
     navigate(`/messages/${pubkey}`);
+  };
+
+  const handleEditProfile = () => {
+    setIsEditingProfile(true);
+    setActiveTab("edit");
+  };
+
+  const handleCancelEdit = () => {
+    // Przywróć dane formularza do stanu początkowego
+    if (profile) {
+      setProfileForm({
+        name: profile.name || "",
+        avatar: profile.avatar || "",
+        about: profile.about || "",
+        nip05: profile.nip05 || "",
+      });
+    }
+    setIsEditingProfile(false);
+    setActiveTab("posts");
+    setError(null);
+  };
+
+  const handleFormChange = (e) => {
+    const { name, value } = e.target;
+    setProfileForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleUpdateProfile = async (e) => {
+    e.preventDefault();
+
+    if (!currentUser) {
+      alert(t("profile.loginToEdit"));
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      const updatedProfile = await nostrClient.updateProfile({
+        name: profileForm.name,
+        avatar: profileForm.avatar,
+        about: profileForm.about,
+        nip05: profileForm.nip05,
+      });
+
+      setProfile(updatedProfile);
+      setIsEditingProfile(false);
+      setActiveTab("posts");
+    } catch (error) {
+      console.error("Failed to update profile:", error);
+      setError(t("profile.updateFailed"));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleVote = async (postId, isUpvote) => {
@@ -419,7 +494,7 @@ function Profile({ nostrClient, currentUser }) {
             </div>
           </div>
 
-          {currentUser && currentUser.pubkey !== pubkey && (
+          {currentUser && currentUser.pubkey !== pubkey ? (
             <div className="profile-actions">
               <button
                 type="button"
@@ -436,6 +511,19 @@ function Profile({ nostrClient, currentUser }) {
                 {t("profile.sendMessage")}
               </button>
             </div>
+          ) : (
+            currentUser &&
+            currentUser.pubkey === pubkey && (
+              <div className="profile-actions">
+                <button
+                  type="button"
+                  onClick={handleEditProfile}
+                  className="edit-profile-btn"
+                >
+                  {t("profile.editProfile")}
+                </button>
+              </div>
+            )
           )}
         </div>
       </div>
@@ -470,6 +558,11 @@ function Profile({ nostrClient, currentUser }) {
         {activeTab === "following" && (
           <button type="button" className="tab active">
             {t("profile.following")} ({following.length})
+          </button>
+        )}
+        {activeTab === "edit" && (
+          <button type="button" className="tab active">
+            {t("profile.editProfile")}
           </button>
         )}
       </div>
@@ -566,6 +659,91 @@ function Profile({ nostrClient, currentUser }) {
             isLoading={isLoadingUsers}
             title={t("profile.followingTab")}
           />
+        )}
+
+        {activeTab === "edit" && (
+          <div className="edit-profile-form">
+            <form onSubmit={handleUpdateProfile}>
+              <div className="form-group">
+                <label htmlFor="name">{t("profile.name")}</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={profileForm.name}
+                  onChange={handleFormChange}
+                  placeholder={t("profile.namePlaceholder")}
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="avatar">{t("profile.avatar")}</label>
+                <input
+                  type="url"
+                  id="avatar"
+                  name="avatar"
+                  value={profileForm.avatar}
+                  onChange={handleFormChange}
+                  placeholder={t("profile.avatarPlaceholder")}
+                />
+                {profileForm.avatar && (
+                  <div className="avatar-preview">
+                    <img
+                      src={profileForm.avatar}
+                      alt={t("profile.avatarPreview")}
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="about">{t("profile.about")}</label>
+                <textarea
+                  id="about"
+                  name="about"
+                  value={profileForm.about}
+                  onChange={handleFormChange}
+                  placeholder={t("profile.aboutPlaceholder")}
+                  rows={4}
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="nip05">{t("profile.nip05")}</label>
+                <input
+                  type="text"
+                  id="nip05"
+                  name="nip05"
+                  value={profileForm.nip05}
+                  onChange={handleFormChange}
+                  placeholder={t("profile.nip05Placeholder")}
+                />
+                <small className="nip05-info">{t("profile.nip05Info")}</small>
+              </div>
+
+              {error && <div className="error-message">{error}</div>}
+
+              <div className="form-actions">
+                <button
+                  type="button"
+                  onClick={handleCancelEdit}
+                  className="cancel-btn"
+                  disabled={isSubmitting}
+                >
+                  {t("common.cancel")}
+                </button>
+                <button
+                  type="submit"
+                  className="save-btn"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting
+                    ? t("profile.saving")
+                    : t("profile.saveChanges")}
+                </button>
+              </div>
+            </form>
+          </div>
         )}
       </div>
     </div>

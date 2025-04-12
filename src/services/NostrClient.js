@@ -313,6 +313,47 @@ class NostrClient {
     }
   }
 
+  async updateProfile(profileData) {
+    if (!this.connected) {
+      throw new Error("Nostr client not connected");
+    }
+
+    try {
+      const userPubkey = await this.getMyPublicKey();
+
+      // Tworzymy zdarzenie metadanych (kind 0)
+      const event = {
+        kind: 0,
+        content: JSON.stringify({
+          name: profileData.name || "",
+          picture: profileData.avatar || "",
+          about: profileData.about || "",
+          nip05: profileData.nip05 || "",
+        }),
+        tags: [],
+        created_at: Math.floor(Date.now() / 1000),
+      };
+
+      // Podpisujemy zdarzenie
+      const signedEvent = await this.signEvent(event);
+
+      // Publikujemy zdarzenie do przekaźników
+      const pubs = this.pool.publish(this.relays, signedEvent);
+      await Promise.all(pubs);
+
+      return {
+        pubkey: userPubkey,
+        name: profileData.name || null,
+        avatar: profileData.avatar || null,
+        about: profileData.about || null,
+        nip05: profileData.nip05 || null,
+      };
+    } catch (error) {
+      console.error("Failed to update profile:", error);
+      throw error;
+    }
+  }
+
   async getUserPosts(pubkey) {
     if (!this.connected) {
       throw new Error("Nostr client not connected");

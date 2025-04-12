@@ -139,7 +139,18 @@
       "loginToFollow": "You must be logged in to follow users!",
       "loginToVote": "You must be logged in to vote!",
       "loginToMessage": "You must be logged in to send messages!",
-      "sendMessage": "Message"
+      "sendMessage": "Message",
+      "saving": "Saving...",
+      "saveChanges": "Save Changes",
+      "nip05": "NIP-05",
+      "nip05Placeholder": "Enter your NIP-05 address (e.g. nostr.example.com)",
+      "about": "About",
+      "aboutPlaceholder": "Tell us about yourself...",
+      "name": "Name",
+      "namePlaceholder": "Enter your name...",
+      "avatarPlaceholder": "Enter your avatar URL...",
+      "nip05Info": "NIP-05 is a way to associate a human-readable name with your Nostr public key. It can be used to verify your identity and make it easier for others to find you.",
+      "avatarPreview": "Avatar Preview"
     },
     "comment": {
       "reply": "Reply",
